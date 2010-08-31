@@ -1,0 +1,11 @@
+(defun my-setup-c-mode ()
+  (c-set-style "linux")
+  (setq whitespace-indent-tabs-mode t)
+  (imenu-add-menubar-index)
+  (column-marker-1 79)
+  (setq comment-style 'extra-line)
+  (add-hook 'before-save-hook 'whitespace-cleanup nil t)
+  (local-set-key (kbd "RET") 'newline-and-indent))
+
+(add-hook 'c-mode-common-hook 'my-setup-c-mode)
+(add-to-list 'auto-mode-alist '("\\.x$" . c-mode))

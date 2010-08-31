@@ -1,0 +1,46 @@
+10
+
+dir
+5312
+http://v8.googlecode.com/svn/trunk/test
+http://v8.googlecode.com/svn
+
+
+
+2010-08-18T07:45:01.341409Z
+5295
+ricow@chromium.org
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ce2b1a6d-e550-0410-aec6-3dcde31c8c00
+
+es5conform
+dir
+
+message
+dir
+
+cctest
+dir
+
+mozilla
+dir
+
+mjsunit
+dir
+
+sputnik
+dir
+
