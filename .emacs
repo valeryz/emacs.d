@@ -1,11 +1,19 @@
 ;; .emacs
 
 (setq *settings-dir* "~/.emacs.d/")
-(setenv "PATH" "/Users/vz/bin:/opt/local/bin:/Library/Frameworks/Python.framework/Versions/2.6/bin:/bin:/usr/bin:/usr/local/bin")
+(setenv "PATH" "/Users/vz/bin:/opt/local/bin:/Library/Frameworks/Python.framework/Versions/2.6/bin:/opt/local/Library/Frameworks/Python.framework/Versions/2.6/bin:/usr/bin:/usr/local/bin")
 
 (setq inhibit-splash-screen t)
 
+(setq transient-mark-mode nil) ;; let's try it this way
+(setq set-mark-command-repeat-pop t)
+(setq kill-read-only-ok t)
+
 (add-to-list 'load-path *settings-dir*)
+
+;; GNU global
+(add-to-list 'load-path "/opt/local/share/gtags")
+(require 'gtags)
 
 ;; ECB
 (add-to-list 'load-path "~/.emacs.d/ecb/")
@@ -13,6 +21,8 @@
 (require 'ecb)
 
 (set-language-environment "UTF-8")
+(setq default-input-method "russian-computer")
+
 (require 'tramp)
 (setq tramp-default-method "scpc")
 
