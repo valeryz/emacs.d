@@ -22,11 +22,11 @@
 	  (flymake-mode)
 	(message (format "The error was: %s" err)))))
   
-  (add-hook 'find-file-hook 'python-flymake-enable))
+)
+  ;;(add-hook 'find-file-hook 'python-flymake-enable))
 
 (load-library "pylint")
 
-(when nil
 (autoload 'pymacs-apply "pymacs")
 (autoload 'pymacs-call "pymacs")
 (autoload 'pymacs-eval "pymacs" nil t)
@@ -109,7 +109,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; End Auto Completion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-)
+
 
 
 (defun my-python-hook ()

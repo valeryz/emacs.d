@@ -165,9 +165,9 @@
     (load (expand-file-name "nxhtml-loaddefs" nxhtml-install-dir) nxhtml-autoload-web))
   (nxhtml-autostart-trace "... nXhtml loading %.1f seconds elapsed ..." (- (float-time) nxhtml-load-time-start))
 
-  ;; Turn on `nxhtml-global-minor-mode' unconditionally
-  (nxhtml-autostart-trace "Turn on `nxhtml-global-minor-mode' unconditionally")
-  (nxhtml-global-minor-mode 1)
+  ;; Turn on `nxhtml-menu-mode' unconditionally
+  (nxhtml-autostart-trace "Turn on `nxhtml-menu-mode' unconditionally")
+  (nxhtml-menu-mode 1)
   (nxhtml-autostart-trace "... nXhtml loading %.1f seconds elapsed ..." (- (float-time) nxhtml-load-time-start))
 
   ;; Patch the rnc include paths

@@ -275,12 +275,6 @@ When this mode is on the following keys are defined:
   (let ((s (with-output-to-string (backtrace))))
     (message "mumamo-debug: %s" s)))
 
-(defun mumamo-list-timers ()
-  (interactive)
-  (mapatoms (lambda (s)
-              (when (timerp s)
-                (message "%s: %s" (symbol-name s) (symbol-value s))))))
-
 ;; (defun mumamo-bt-to-msg (msg)
 ;;   (mumamo-msgfntfy "%s: %s" msg
 ;;            (with-output-to-string

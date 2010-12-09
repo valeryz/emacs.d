@@ -342,7 +342,7 @@ before applying."
     nxml-mode
 
     javascript-mode
-    espresso-mode
+    ;;espresso-mode
     rhtml-mode
     )
   "Priority list for major modes.

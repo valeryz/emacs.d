@@ -1349,8 +1349,7 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
 ;;;###autoload
 (define-mumamo-multi-major-mode genshi-html-mumamo-mode
   "Turn on multiple major modes for Genshi with main mode `html-mode'.
-This also covers inlined style and javascript.
-"
+This also covers inlined style and javascript."
   ("Genshi HTML Family" html-mode
    (
     ;;mumamo-chunk-genshi%
@@ -1611,6 +1610,18 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
       (setcdr (last chunk) '(mumamo-template-indentor))
       chunk)))
 
+(defun mumamo-chunk-eruby-quoted (pos min max)
+  "Find \"<%= ... %>\".  Return range and 'ruby-mode.
+See `mumamo-find-possible-chunk' for POS, MIN and MAX.
+
+This is a workaround for problems with strings."
+  (let ((chunk (mumamo-quick-static-chunk pos min max "\"<%=" "%>\"" t 'ruby-mode t)))
+    (when chunk
+      ;; Put indentation type on 'mumamo-next-indent on the chunk:
+      ;; Fix-me: use this!
+      (setcdr (last chunk) '(mumamo-template-indentor))
+      chunk)))
+
 (defun mumamo-chunk-eruby-comment (pos min max)
   "Find <%# ... %>.  Return range and 'ruby-mode.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX.
@@ -1650,6 +1661,20 @@ This also covers inlined style and javascript."
     mumamo-chunk-onjs=
     )))
 
+;;;###autoload
+(define-mumamo-multi-major-mode eruby-javascript-mumamo-mode
+  "Turn on multiple major modes for eRuby with main mode `javascript-mode'."
+  ("eRuby Html Family" javascript-mode
+   (
+    mumamo-chunk-eruby-comment
+    mumamo-chunk-eruby-quoted
+    mumamo-chunk-eruby
+    ;;mumamo-chunk-inlined-style
+    ;;mumamo-chunk-inlined-script
+    ;;mumamo-chunk-style=
+    ;;mumamo-chunk-onjs=
+    )))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; heredoc
@@ -1669,8 +1694,8 @@ The entries in this list have the form
   (REGEXP MAJOR-MODE-SPEC)
 
 where REGEXP is a regular expression that should match the
-heredoc marker and MAJOR-MODE-SPEC is the major mode spec to use
-in the heredoc part.
+heredoc marker line and MAJOR-MODE-SPEC is the major mode spec to
+use in the heredoc part.
 
 The major mode spec is translated to a major mode using
 `mumamo-major-mode-from-modespec'."
@@ -1710,13 +1735,17 @@ Supported values are 'perl."
         (let (next-<<
               (want-<< t)
               heredoc-mark
-              (delimiter "")
+              end-mark-len
+              heredoc-line
+              delimiter
+              skipped
               (skip-b "")
               start-inner
               end
               exc-mode
               fw-exc-fun
               border-fun
+              allow-code-after
               start-outer
               ps
               )
@@ -1724,6 +1753,7 @@ Supported values are 'perl."
           (beginning-of-line)
           (case lang
             ('sh
+             (setq allow-code-after t)
              (while want-<<
                (setq next-<< (search-forward "<<" max t))
                (if (not next-<<)
@@ -1737,14 +1767,25 @@ Supported values are 'perl."
                (when (= (char-after) ?-)
                  (setq skip-b "\t*")
                  (unless (eolp) (forward-char)))
-               (skip-chars-forward " \t")
+               ;; fix-me: space
+               (setq skipped (skip-chars-forward " \t"))
                (when (memq (char-after) '(?\" ?\'))
                  (setq delimiter (list (char-after))))
-               (when (looking-at (concat delimiter "\\([^\n<>;]*\\)" delimiter "[[:blank:]]*\n"))
-                 (setq heredoc-mark  (buffer-substring-no-properties
-                                      (match-beginning 1)
-                                      (match-end 1)))
-                 (setq start-inner (match-end 0)))))
+               (if (and (> skipped 0) (not delimiter))
+                   (setq heredoc-mark "")
+                 (when (looking-at (rx-to-string
+                                    `(and (regexp ,(if delimiter
+                                                       (concat delimiter "\\([^\n<>;]+\\)" delimiter)
+                                                     "\\([^ \t\n<>;]+\\)"))
+                                          (or blank line-end))))
+                   (setq heredoc-mark  (buffer-substring-no-properties
+                                        (match-beginning 1)
+                                        (match-end 1)))))
+               (when heredoc-mark
+                 (setq heredoc-line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                 (setq start-inner (1+ (point-at-eol)))
+                 (setq end-mark-len (length heredoc-mark))
+                 )))
             ('w32-ps (error "No support for windows power shell yet"))
             ('php
              (while want-<<
@@ -1752,7 +1793,7 @@ Supported values are 'perl."
                ;; Check inside string or comment.
                (if (not next-<<)
                    (setq want-<< nil) ;; give up
-                 (setq ps (parse-partial-sexp (line-beginning-position) (point)))
+                 (setq ps (parse-partial-sexp (line-beginning-position) (- (point) 0)))
                  (unless (or (nth 3 ps) (nth 4 ps))
                    (setq want-<< nil))))
              (when next-<<
@@ -1762,12 +1803,15 @@ Supported values are 'perl."
                  (setq heredoc-mark  (buffer-substring-no-properties
                                       (match-beginning 1)
                                       (match-end 1)))
+                 (setq heredoc-line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
                  ;; fix-me: nowdoc
                  (when (and (= ?\' (string-to-char heredoc-mark))
                             (= ?\' (string-to-char (substring heredoc-mark (1- (length heredoc-mark))))))
                    (setq heredoc-mark (substring heredoc-mark 1 (- (length heredoc-mark) 1))))
+                 (setq end-mark-len (1+ (length heredoc-mark)))
                  (setq start-inner (match-end 0)))))
             ('perl
+             (setq allow-code-after t)
              (while want-<<
                (setq next-<< (search-forward "<<" max t))
                (if (not next-<<)
@@ -1778,14 +1822,26 @@ Supported values are 'perl."
                    (setq want-<< nil))))
              (when next-<<
                (setq start-outer (- (point) 2))
-               (skip-chars-forward " \t")
+               ;; fix-me: space
+               (setq skipped (skip-chars-forward " \t"))
                (when (memq (char-after) '(?\" ?\'))
                  (setq delimiter (list (char-after))))
-               (when (looking-at (concat delimiter "\\([^\n;]*\\)" delimiter ";[[:blank:]]*\n"))
-                 (setq heredoc-mark  (buffer-substring-no-properties
-                                      (match-beginning 1)
-                                      (match-end 1)))
-                 (setq start-inner (1+ (match-end 0))))))
+               (if (and (> skipped 0) (not delimiter))
+                   (setq heredoc-mark "") ;; blank line
+                 (when (looking-at (rx-to-string
+                                    `(and (regexp ,(if delimiter
+                                                       (concat delimiter "\\([^\n;]*\\)" delimiter)
+                                                     "\\([^ \t\n<>;]+\\)"))
+                                          (or blank ";"))))
+                   (setq heredoc-mark  (buffer-substring-no-properties
+                                        (match-beginning 1)
+                                        (match-end 1)))))
+               (when heredoc-mark
+                 (setq heredoc-line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                 ;;(setq start-inner (1+ (match-end 0)))
+                 (setq start-inner (1+ (point-at-eol)))
+                 (setq end-mark-len (length heredoc-mark))
+                 )))
             ('python
              (unless (eobp) (forward-char))
              (while want-<<
@@ -1815,6 +1871,8 @@ Supported values are 'perl."
                  (setq heredoc-mark  (buffer-substring-no-properties
                                       (match-beginning 0)
                                       (match-end 0)))
+                 (setq end-mark-len (length heredoc-mark))
+                 (setq heredoc-line (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
                  (setq start-inner (match-end 0)))))
             (t (error "next-<< not implemented for lang %s" lang)))
           (when start-inner (assert (<= pos start-inner) t))
@@ -1831,9 +1889,9 @@ Supported values are 'perl."
               ;; Fix-me: rename start-inner <=> start-outer...
               (setq border-fun `(lambda (start end exc-mode)
                                   ;; Fix-me: use lengths...
-                                  (list (+ start (- ,start-inner ,start-outer 1))
-                                        (when end
-                                          (- end ,(1+ (length heredoc-mark)))))))
+                                  (list
+                                   (if ,allow-code-after nil (+ start (- ,start-inner ,start-outer 1)))
+                                   (when end (- end ,end-mark-len)))))
               (setq fw-exc-fun `(lambda (pos max)
                                   (save-match-data
                                     (let ((here (point)))
@@ -1844,14 +1902,16 @@ Supported values are 'perl."
                                             (- (point) 0)
                                             )
                                         (goto-char here)))))))
-            (setq exc-mode (mumamo-mode-for-heredoc heredoc-mark))
+            (setq exc-mode (mumamo-mode-for-heredoc heredoc-line))
             (list start-inner end exc-mode nil nil fw-exc-fun nil)
             ;; Fix me: Add overriding for inner chunks (see
             ;; http://www.emacswiki.org/emacs/NxhtmlMode#toc13). Maybe
             ;; make fw-exc-fun a list (or a cons, since overriding is
             ;; probably all that I want to add)? And make the
             ;; corresponding chunk property a list too?
-            (list start-outer end exc-mode (list start-inner end) nil fw-exc-fun border-fun 'heredoc)
+            ;;(list start-outer end exc-mode (list start-inner end) nil fw-exc-fun border-fun 'heredoc)
+            (list (if allow-code-after start-inner start-outer)
+                  end exc-mode (list start-inner end) nil fw-exc-fun border-fun 'heredoc)
             )))
     (error (mumamo-display-error 'mumamo-chunk-heredoc
                                  "%s" (error-message-string err)))))
@@ -2898,11 +2958,14 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
   ;;                             'mumamo-mako-<%-fw-start-old
   ;;                             'mumamo-mako-<%-fw-end
   ;;                             'mumamo-mako-<%-find-borders)
-  (mumamo-possible-chunk-forward pos max
-                              'mumamo-mako-<%-fw-start
-                              'mumamo-mako-<%-fw-end
-                              'mumamo-mako-<%-find-borders
-                              ))
+  (let ((chunk (mumamo-possible-chunk-forward pos max
+                                              'mumamo-mako-<%-fw-start
+                                              'mumamo-mako-<%-fw-end
+                                              'mumamo-mako-<%-find-borders
+                                              )))
+    (when chunk
+      (setcdr (last chunk) '(mumamo-template-indentor))
+      chunk)))
 
 (defun mumamo-mako-<%-find-borders (start end exc-mode)
   (when exc-mode
@@ -2952,7 +3015,8 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
     (when start
       (setq ret (match-beginning 0)))
     (goto-char here)
-    (list ret 'python-mode)))
+    (when ret
+      (list ret 'python-mode))))
 
 (defun mumamo-mako-<%-fw-end (pos max)
   (save-match-data
@@ -2963,7 +3027,10 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
 (defun mumamo-chunk-mako-% (pos min max)
   "Find % python EOL.  Return range and `python-mode'.
 See `mumamo-find-possible-chunk' for POS, MIN and MAX."
-  (mumamo-whole-line-chunk pos min max "%" 'python-mode))
+  (let ((chunk (mumamo-whole-line-chunk pos min max "%" 'python-mode)))
+    (when chunk
+      (setcdr (last chunk) '(mumamo-template-indentor))
+      chunk)))
 
 (defun mumamo-chunk-mako-one-line-comment (pos min max)
   "Find ## comment EOL.  Return range and `python-mode'.
@@ -3186,6 +3253,7 @@ See `mumamo-find-possible-chunk' for POS, MIN and MAX."
               nil ;; find-borders fun
               )))))
 
+;;;###autoload
 (define-mumamo-multi-major-mode markdown-html-mumamo-mode
   "Turn on multi major markdown mode in buffer.
 Main major mode will be `markdown-mode'.

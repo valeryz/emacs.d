@@ -223,7 +223,11 @@ highlighting here."
   (hl-needed-hide)
   (unless (active-minibuffer-window)
     (setq hl-needed-old-blink blink-cursor-mode)
-    (when blink-cursor-mode (blink-cursor-mode -1))
+    (when blink-cursor-mode
+      (blink-cursor-mode -1)
+      ;;(when (timerp blink-cursor-timer) (cancel-timer blink-cursor-timer))
+      (blink-cursor-end)
+      )
     (unless hl-line-mode
       (when hl-needed-mark-line
         (let ((hl-line-mode t)
@@ -243,6 +247,7 @@ highlighting here."
   (when (and hl-needed-old-blink
              (not blink-cursor-mode))
     (blink-cursor-mode 1))
+  (setq hl-needed-old-blink nil)
   (unless hl-line-mode
     (hl-line-unhighlight))
   (when (featurep 'vline)

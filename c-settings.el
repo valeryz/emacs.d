@@ -6,7 +6,8 @@
   (setq comment-style 'extra-line)
   (add-hook 'before-save-hook 'whitespace-cleanup nil t)
   (local-set-key (kbd "RET") 'newline-and-indent)
-  (subword-mode))
+  (subword-mode)
+  (set-fill-column 78))
 
 (add-hook 'c-mode-common-hook 'my-setup-c-mode)
 (add-to-list 'auto-mode-alist '("\\.x$" . c-mode))

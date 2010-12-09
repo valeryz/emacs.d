@@ -245,8 +245,8 @@
 
 
 
-(defvar nxhtml-minor-mode-menu-map
-  (let ((map (make-sparse-keymap "nxhtml-minor-mode-menu")))
+(defvar nxhtml-menu-mode-menu-map
+  (let ((map (make-sparse-keymap "nxhtml-menu-mode-menu")))
 
     (let ((help-map (make-sparse-keymap)))
       (define-key help-map [emacs-Q-nxhtml]
@@ -278,6 +278,8 @@
         )
       (define-key help-map [nxhtml-features-check]
         (list 'menu-item "Check Optional Features" 'nxhtml-features-check))
+      (define-key help-map [nxhtml-list-multi-modes]
+        (list 'menu-item "List Available Multi Major Modes" 'mumamo-list-defined-multi-major-modes))
       (define-key help-map [nxhtml-customize]
         (list 'menu-item "Customize nXhtml ..." 'nxhtml-customize))
 ;;;       (define-key help-map [nxhtml-quick-customize]
@@ -1261,69 +1263,135 @@
 
     map))
 
-(defvar nxhtml-minor-mode-map
+(defvar nxhtml-menu-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [(control ?c) ?? ?x] 'nxhtml-short-tag-help)
     (define-key map [(control ?c) ?? ?c] 'xhtml-help-show-css-ref)
     (define-key map [(control ?c) ?_] 'nxhtml-toggle-visible-warnings)
-    (define-key map [menu-bar nxhtml-minor-mode]
-      (list 'menu-item "nXhtml" nxhtml-minor-mode-menu-map))
+    (define-key map [menu-bar nxhtml-menu-mode]
+      (list 'menu-item "nXhtml" nxhtml-menu-mode-menu-map))
     map))
 
 ;;;###autoload
-(define-minor-mode nxhtml-minor-mode
+(define-minor-mode nxhtml-menu-mode
   "Minor mode to turn on some key and menu bindings.
-See `nxhtml-mode' for more information."
-  :keymap nxhtml-minor-mode-map
+See `nxhtml-mode' for more information.
+
+This minor mode adds the entry 'nXhtml' to the menu bar.  This
+submenu gives easy access to most of the important features of
+nXhtml.
+
+To see an \(incomplete) overview in html format do
+\\[nxhtml-overview].
+
+* Note: Please observe that when loading nXhtml some file
+  associations are done, see `nxhtml-setup-file-assoc'.
+
+Here are some important features:
+
+- multiple major modes, see `define-mumamo-multi-major-mode'
+- easy uploading and viewing of files, see for example
+  `html-upl-upload-file'
+
+- validation in XHTML part for php etc, see
+  `nxhtml-validation-header-mode' (you probably also want to know
+  about `nxhtml-toggle-visible-warnings' for this!)
+
+- converting of html to xhtml, see `tidy-buffer'
+
+Some smaller, useful, but easy-to-miss features:
+
+* Following links. The href and src attribute names are
+  underlined and a special keymap is bound to
+  them:\\<mlinks-mode-map>
+
+    \\[mlinks-backward-link], \\[mlinks-forward-link] Move
+        between underlined href/src attributes
+
+    \\[mlinks-goto], Mouse-1 Follow link inside Emacs
+        (if possible)
+
+  It is even a little bit quicker when the links are in an active
+  state (marked with the face `isearch'):\\<mlinks-active-hilight-keymap>
+
+    \\[mlinks-backward-link], \\[mlinks-forward-link] Move
+        between underlined href/src attributes
+    \\[mlinks-goto], Mouse-1  Follow link inside Emacs (if possible)
+
+  If the link is not into a file that you can edit (a mailto link
+  for example) you will be prompted for an alternative action.
+
+* Creating links. To make it easier to create links to id/name
+  attribute in different files there are two special
+  functions:\\<nxhtml-mode-map>
+
+    \\[nxhtml-save-link-to-here] copy link to id/name (you must
+        be in the tag to get the link)
+    \\[nxhtml-paste-link-as-a-tag] paste this as an a-tag.
+
+This minor mode also adds some bindings:
+
+\\{nxhtml-menu-mode-map}
+
+---------
+* Note: Some of the features supported are optional and available
+  only if other Emacs modules are found.  Use
+  \\[nxhtml-features-check] to get a list of these optional
+  features and modules needed. You should however have no problem
+  with this if you have followed the installation instructions
+  for nXhtml."
+  :keymap nxhtml-menu-mode-map
   :group 'nxhtml
+  :global t
   )
-;;(put 'nxhtml-minor-mode 'permanent-local t)
 
-(defcustom nxhtml-minor-mode-modes
-  '(
-    nxhtml-mode
-    nxml-mode
-    html-mode
-    sgml-mode
-    xml-mode
-    php-mode
-    css-mode
-    javascript-mode
-    java-mode ;; jsp
-    groovy-mode ;; gsp
-    image-mode
-    ;;
-    dired-mode
-    )
-  "List for turning on `nxhtml-minor-mode'.
-If the buffer's major modes is any of those in this list then
-`nxhtml-global-minor-mode' will turn on `nxhtml-minor-mode' in
-the buffer."
-  :type '(repeat (symbol :tag "Major mode"))
-  :group 'nxhtml)
+(defalias 'nxhtml-minor-mode 'nxhtml-menu-mode)
+(defalias 'nxhtml-global-minor-mode 'nxhtml-menu-mode)
 
-(defun nxhtml-maybe-turn-on-minor-mode ()
-  "Maybe turn on `nxhtml-minor-mode'.
-See `nxhtml-minor-mode-modes'."
-  (nxhtml-minor-mode 1))
+;; (defcustom nxhtml-menu-mode-modes
+;;   '(
+;;     nxhtml-mode
+;;     nxml-mode
+;;     html-mode
+;;     sgml-mode
+;;     xml-mode
+;;     php-mode
+;;     css-mode
+;;     javascript-mode
+;;     java-mode ;; jsp
+;;     groovy-mode ;; gsp
+;;     image-mode
+;;     ;;
+;;     dired-mode
+;;     )
+;;   "List for turning on `nxhtml-menu-mode'.
+;; If the buffer's major modes is any of those in this list then
+;; `nxhtml-global-minor-mode' will turn on `nxhtml-menu-mode' in
+;; the buffer."
+;;   :type '(repeat (symbol :tag "Major mode"))
+;;   :group 'nxhtml)
+
+;; (defun nxhtml-maybe-turn-on-minor-mode ()
+;;   "Maybe turn on `nxhtml-menu-mode'.
+;; See `nxhtml-menu-mode-modes'."
+;;   (nxhtml-menu-mode 1))
 ;; (unless (or (minibufferp (current-buffer))
 ;;             (string= " " (substring (buffer-name) 0 1))
 ;;             (string= "*" (substring (buffer-name) 0 1))
 ;;             )
 ;;   (let ((on (and (boundp 'mumamo-multi-major-mode)
 ;;                  mumamo-multi-major-mode)))
-;;     (dolist (major nxhtml-minor-mode-modes)
+;;     (dolist (major nxhtml-menu-mode-modes)
 ;;       (when (derived-mode-p major)
 ;;         (setq on t)))
 ;;     (when on
-;;       (nxhtml-minor-mode 1)))))
+;;       (nxhtml-menu-mode 1)))))
 
-;;;###autoload
-(define-globalized-minor-mode nxhtml-global-minor-mode
-  nxhtml-minor-mode
-  nxhtml-maybe-turn-on-minor-mode
-  ;;:require 'nxhtml-menu
-  :group 'nxhtml)
+;; (define-globalized-minor-mode nxhtml-global-minor-mode
+;;   nxhtml-menu-mode
+;;   nxhtml-maybe-turn-on-minor-mode
+;;   ;;:require 'nxhtml-menu
+;;   :group 'nxhtml)
 ;;(message "nxhtml-menu:here A")
 ;;(custom-reevaluate-setting 'nxhtml-global-minor-mode)
 ;;(message "nxhtml-menu:here B")
@@ -1520,7 +1588,7 @@ Both the current value and the value to save is set, but
       (let ((inhibit-read-only t)
             (here (point)))
         (Custom-mode)
-        (nxhtml-minor-mode 1)
+        (nxhtml-menu-mode 1)
         (setq cursor-in-non-selected-windows nil)
         (nxhtml-custom-h1 "Welcome to nXhtml - a package for web editing" t)
         (insert "\n\n")
@@ -1565,7 +1633,7 @@ Both the current value and the value to save is set, but
 If nil then the message will be shown when you open the first
 file using nxhtml-mode."
   (or nxhtml-skip-welcome
-      (and nxhtml-global-minor-mode
+      (and nxhtml-menu-mode
            ;;mumamo-global-mode
            ;;indent-region-mode
            )))

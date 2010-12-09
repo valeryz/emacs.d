@@ -50,7 +50,7 @@
 (eval-when-compile (require 'flymake-css nil t))
 (eval-when-compile (require 'flymake-java-1 nil t))
 
-(defconst nxhtml-menu:version "beta 2.07")
+(defconst nxhtml-menu:version "2.08")
 (setq message-log-max t)
 (setq debug-on-error t)
 

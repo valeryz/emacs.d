@@ -1,11 +1,12 @@
 ;; .emacs
+(setenv "PATH" "/Users/vz/bin:/opt/local/bin:/Library/Frameworks/Python.framework/Versions/2.6/bin:/opt/local/Library/Frameworks/Python.framework/Versions/2.6/bin:/usr/bin:/usr/local/bin")
 
 (setq *settings-dir* "~/.emacs.d/")
-(setenv "PATH" "/Users/vz/bin:/opt/local/bin:/Library/Frameworks/Python.framework/Versions/2.6/bin:/opt/local/Library/Frameworks/Python.framework/Versions/2.6/bin:/usr/bin:/usr/local/bin")
 
 (setq inhibit-splash-screen t)
 
-(setq transient-mark-mode nil) ;; let's try it this way
+(tool-bar-mode 0)
+
 (setq set-mark-command-repeat-pop t)
 (setq kill-read-only-ok t)
 
@@ -14,6 +15,13 @@
 ;; GNU global
 (add-to-list 'load-path "/opt/local/share/gtags")
 (require 'gtags)
+
+;; HTML5
+(add-to-list 'load-path "~/.emacs.d/html5-el/")
+(eval-after-load "rng-loc"
+  '(add-to-list 'rng-schema-locating-files "~/code/html5-el/schemas.xml"))
+
+(require 'whattf-dt)
 
 ;; ECB
 (add-to-list 'load-path "~/.emacs.d/ecb/")
@@ -54,6 +62,14 @@
 ;;      (color-theme-initialize)
 ;;      (color-theme-hober)))
 
+
+;; set all UTF-8
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+
 (load "utils")
 (load "c-settings")
 (load "common-lisp")
@@ -89,6 +105,9 @@
 
 ;; Global Key Bindings
 
+(when (fboundp 'ns-toggle-fullscreen)
+  (global-set-key (kbd "<s-return>") 'ns-toggle-fullscreen))
+
 (global-set-key (kbd "<f6>")   ;; F6 will stop the clock
                 (lambda () (interactive) (org-clock-out)
                         (save-excursion
@@ -113,6 +132,13 @@
         (py-which-args '("shell")))
     (cd "~/Desktop/projects/kgp/Src/portal/")
     (py-shell)))
+
+(require 'imenu)
+
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(ac-config-default)
 
 (require 'auto-complete)
 (global-auto-complete-mode t)
@@ -162,10 +188,13 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(ecb-options-version "2.40"))
+ '(ecb-options-version "2.40")
+ '(org-agenda-files (quote ("~/org/linuxhacking.org" "~/org/TASKS.org" "~/org/shop.org" "~/org/think.org" "~/org/KGP.org" "~/org/GOALS.org" "~/org/projects.org")))
+ '(safe-local-variable-values (quote ((encoding . utf-8) (ticket-url-template . "http://sc-issuetracker.zoral.com.ua/ticket/%d") (ticket-url-template . http://sc-issuetracker\.zoral\.com\.ua/ticket/%s) (test-case-name . twisted\.web\.test\.test_webclient) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_task\,twisted\.test\.test_cooperator) (test-case-name . twisted\.test\.test_twistd) (test-case-name . twisted\.conch\.test\.test_transport) (test-case-name . twisted\.conch\.test\.test_connection) (test-case-name . twisted\.conch\.test\.test_knownhosts) (test-case-name . twisted\.conch\.test\.test_manhole) (test-case-name . twisted\.conch\.test\.test_cftp))))
+ '(visible-cursor nil))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- )
+ '(cursor ((t (:background "light salmon")))))

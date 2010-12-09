@@ -1785,7 +1785,8 @@ of those in for example common web browsers."
          (default-directory (file-name-as-directory (expand-file-name first-path))))
     ;; Fix-me: Adding -nw to restart in console does not work. Any way to fix it?
     (unless window-system (setq restart-args (cons "-nw" restart-args)))
-    (apply 'call-process (ourcomments-find-emacs) nil 0 nil restart-args)
+    ;;(apply 'call-process (ourcomments-find-emacs) nil 0 nil restart-args)
+    (apply 'emacs restart-args)
     ;; Wait to give focus to new Emacs instance:
     (sleep-for 3)))
 
@@ -1804,70 +1805,88 @@ of those in for example common web browsers."
     (add-hook 'kill-emacs-hook 'emacs-restart-in-kill t)
     (save-buffers-kill-emacs)))
 
+(defvar ourcomments-started-emacs-use-output-buffer nil
+  "If non-nil then save output form `emacs'.
+Set this to `t' to debug problems with starting a new Emacs.
+
+If non-nil save output to buffer 'call-process emacs output'.
+Note that this will lock the Emacs calling `emacs' until the new
+Emacs has finished.")
+;;(setq ourcomments-started-emacs-use-output-buffer t)
+;;(defun my-test () (interactive) (emacs-Q "-bad-arg"))
+
 ;;;###autoload
 (defun emacs (&rest args)
-  "Start a new Emacs."
+  "Start a new Emacs with default parameters.
+Additional ARGS are passed to the new Emacs.
+
+See also `ourcomments-started-emacs-use-output-buffer'."
   (interactive)
   (recentf-save-list)
-  (let ((ret (apply 'call-process (ourcomments-find-emacs) nil 0 nil
-                    args)))
-    (message "Started 'emacs' - it will be ready soon ...")
+  (let* ((out-buf (when ourcomments-started-emacs-use-output-buffer
+                    (get-buffer-create "call-process emacs output")))
+         (buf-arg (or out-buf 0))
+         (args-text (mapconcat 'identity (cons "" args) " "))
+         ret
+         (fin-msg ""))
+    (when out-buf
+      (display-buffer out-buf)
+      (setq fin-msg ". Finished.")
+      (message "Started 'emacs%s' => %s. Locked until this is finished." args-text ret fin-msg)
+      (redisplay))
+    (setq ret (apply 'call-process (ourcomments-find-emacs) nil buf-arg nil args))
+    (message "Started 'emacs%s' => %s%s" args-text ret fin-msg)
     ret))
 
 ;;;###autoload
 (defun emacs-buffer-file()
   "Start a new Emacs showing current buffer file.
 Go to the current line and column in that file.
-If there is no buffer file then instead start with `dired'."
+If there is no buffer file then instead start with `dired'.
+
+This calls the function `emacs' with argument --no-desktop and
+the file or a call to dired."
   (interactive)
   (recentf-save-list)
   (let ((file (buffer-file-name))
         (lin (line-number-at-pos))
         (col (current-column)))
-    ;;(unless file (error "No buffer file name"))
     (if file
-        (progn
-          (call-process (ourcomments-find-emacs) nil 0 nil "--no-desktop"
-                        (format "+%d:%d" lin col) file)
-          (message "Started 'emacs buffer-file-name' - it will be ready soon ..."))
-      (call-process (ourcomments-find-emacs) nil 0 nil "--no-desktop" "--eval"
-                    (format "(dired \"%s\")" default-directory)))))
+        (apply 'emacs "--no-desktop" (format "+%d:%d" lin col) file nil)
+      (applay 'emacs "--no-desktop" "--eval" (format "(dired \"%s\")" default-directory nil)))))
 
 ;;;###autoload
-(defun emacs--debug-init()
+(defun emacs--debug-init(&rest args)
+  "Start a new Emacs with --debug-init parameter.
+This calls the function `emacs' with added arguments ARGS."
   (interactive)
-  (call-process (ourcomments-find-emacs) nil 0 nil "--debug-init")
-  (message "Started 'emacs --debug-init' - it will be ready soon ..."))
+  (apply 'emacs "--debug-init" args))
 
 ;;;###autoload
 (defun emacs--no-desktop (&rest args)
+  "Start a new Emacs with --no-desktop parameter.
+This calls the function `emacs' with added arguments ARGS."
   (interactive)
-  (let ((ret (apply 'call-process (ourcomments-find-emacs) nil 0 nil "--no-desktop"
-                    args)))
-    (message "Started 'emacs --no-desktop' - it will be ready soon ...")
-    ret))
+  (apply 'emacs "--no-desktop" args))
 
 ;;;###autoload
 (defun emacs-Q (&rest args)
-  "Start new Emacs without any customization whatsoever."
+  "Start a new Emacs with -Q parameter.
+Start new Emacs without any customization whatsoever.
+This calls the function `emacs' with added arguments ARGS."
   (interactive)
-  (let ((ret (apply 'call-process (ourcomments-find-emacs) nil 0 nil "-Q"
-                    args)))
-    (message "Started 'emacs -Q' - it will be ready soon ...")
-    ret))
+  (apply 'emacs "-Q" args))
 
 ;;;###autoload
 (defun emacs-Q-nxhtml(&rest args)
-  "Start new Emacs with -Q and load nXhtml."
+  "Start new Emacs with -Q and load nXhtml.
+This calls the function `emacs' with added arguments ARGS."
   (interactive)
-  (let* ((autostart (if (boundp 'nxhtml-install-dir)
-                        (expand-file-name "autostart.el" nxhtml-install-dir)
-                      (expand-file-name "../../EmacsW32/nxhtml/autostart.el"
-                                        exec-directory)))
-         (ret (apply 'emacs-Q "--debug-init" "--load" autostart args)))
-    (message "Started 'emacs -Q --load \"%s\"' - it will be ready soon ..."
-             autostart)
-    ret))
+  (let ((autostart (if (boundp 'nxhtml-install-dir)
+                       (expand-file-name "autostart.el" nxhtml-install-dir)
+                     (expand-file-name "../../EmacsW32/nxhtml/autostart.el"
+                                       exec-directory))))
+    (apply 'emacs-Q "--debug-init" "--load" autostart args)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2060,7 +2079,6 @@ See `tags-query-replace' for DELIMETED and more information."
   "Look for first program PROG in `exec-path' using `exec-suffixes'.
 Return full path if found."
   (interactive "sProgram: ")
-  ;;(let ((path (locate-file prog exec-path exec-suffixes 'executable)))
   (let ((path (executable-find prog)))
     (when (with-no-warnings (called-interactively-p))
       (message "%s found in %s" prog path))

@@ -477,7 +477,10 @@ tutorial buffer."
             (when (= part (nth 0 rec))
               (setq tut-file
                     (if (= part viper-tut--emacs-part)
-                        (expand-file-name (get-language-info "English" 'tutorial) tutorial-directory)
+                        (let ((tf (expand-file-name (get-language-info "English" 'tutorial) tutorial-directory)))
+                          (unless (file-exists-p tf)
+                            (error "Can't find the English tutorial file for Emacs: %S" tf))
+                          tf)
                       (expand-file-name (nth 1 rec) viper-tut-directory)))))
           viper-tut--parts)
     tut-file))
@@ -866,7 +869,7 @@ between you will be notified about that too."
         (if (= n viper-tut--part)
             (insert (format "%s" n))
           (insert-button (format "%s" n)
-                         'help-echo (concat "Go to part " title)
+                         'help-echo (concat "Go to part: " title)
                          'follow-link t
                          'action
                          `(lambda (button)

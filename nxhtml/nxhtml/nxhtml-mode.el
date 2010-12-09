@@ -139,6 +139,7 @@ You can add additional elisp code for completing to
   :init-value t
   :group 'nxhtml
   (nxhtml-turn-onoff-tag-do-also nxhtml-tag-do-also))
+(when nxhtml-tag-do-also (nxhtml-tag-do-also 1))
 
 (defun nxhtml-tag-do-also-toggle ()
   "Toggle `nxhtml-tag-do-also'."
@@ -374,23 +375,6 @@ You can add additional elisp code for completing to
 It is based on `nxml-mode' and adds some features that are useful
 when editing XHTML files.\\<nxhtml-mode-map>
 
-To see an overview in html format do \\[nxhtml-overview].
-
-* Note: Please observe that when loading nXhtml some file
-  associations are done, see `nxhtml-setup-file-assoc'.
-
-The nXhtml menu is added by this mode \(or actually the minor
-mode `nxhtml-minor-mode') and gives quick access and an overview
-of some other important features. These includes:
-
-- multiple major modes, see `define-mumamo-multi-major-mode'
-- easy uploading and viewing of files, see for example
-  `html-upl-upload-file'
-- validation in XHTML part for php etc, see
-  `nxhtml-validation-header-mode' (you probably also want to know about
-  `nxhtml-toggle-visible-warnings' for this!)
-- converting of html to xhtml, see `tidy-buffer'
-
 The XML menu contains functionality added by `nxml-mode' \(on
 which this major mode is based).  There is also a popup menu
 added to the \[apps] key.
@@ -417,43 +401,9 @@ the following way:
 - Completes xml version and encoding.
 - Completes in an empty buffer, ie inserts a skeleton.
 
-Some smaller, useful, but easy-to-miss features:
-
-* Following links. The href and src attribute names are
-  underlined and a special keymap is bound to
-  them:\\<mlinks-mode-map>
-
-    \\[mlinks-backward-link], \\[mlinks-forward-link] Move
-        between underlined href/src attributes
-
-    \\[mlinks-goto], Mouse-1 Follow link inside Emacs
-        (if possible)
-
-  It is even a little bit quicker when the links are in an active
-  state (marked with the face `isearch'):\\<mlinks-active-hilight-keymap>
-
-    \\[mlinks-backward-link], \\[mlinks-forward-link] Move
-        between underlined href/src attributes
-    \\[mlinks-goto], Mouse-1  Follow link inside Emacs (if possible)
-
-  If the link is not into a file that you can edit (a mailto link
-  for example) you will be prompted for an alternative action.
-
-* Creating links. To make it easier to create links to id/name
-  attribute in different files there are two special
-  functions:\\<nxhtml-mode-map>
-
-    \\[nxhtml-save-link-to-here] copy link to id/name (you must
-        be in the tag to get the link)
-    \\[nxhtml-paste-link-as-a-tag] paste this as an a-tag.
-
 Here are all key bindings in nxhtml-mode itself:
 
 \\{nxhtml-mode-map}
-
-The minor mode `nxhtml-minor-mode' adds some bindings:
-
-\\{nxhtml-minor-mode-map}
 
 Notice that other minor mode key bindings may also be active, as
 well as emulation modes. Do \\[describe-bindings] to get a list
@@ -461,15 +411,7 @@ of all active key bindings. Also, *VERY IMPORTANT*, if mumamo is
 used in the buffer each mumamo chunk has a different major mode
 with different key bindings. You can however still see all
 bindings with \\[describe-bindings], but you have to do that with
-point in the mumamo chunk you want to know the key bindings in.
-
----------
-* Note: Some of the features supported by this mode are optional
-  and available only if other Emacs modules are found.  Use
-  \\[nxhtml-features-check] to get a list of these optional
-  features and modules needed. You should however have no problem
-  with this if you have followed the installation instructions
-  for nXhtml."
+point in the mumamo chunk you want to know the key bindings in."
   (set (make-local-variable 'nxml-heading-element-name-regexp)
        nxhtml-heading-element-name-regexp)
   (when (fboundp 'nxml-change-mode)
@@ -478,7 +420,7 @@ point in the mumamo chunk you want to know the key bindings in.
   (when (featurep 'rngalt)
     (add-hook 'nxml-completion-hook 'rngalt-complete nil t))
   ;;(define-key nxhtml-mode-map [(meta tab)] 'nxml-complete)
-  ;;(nxhtml-minor-mode 1)
+  ;;(nxhtml-menu-mode 1)
   (when (and nxhtml-use-imenu
              (featurep 'html-imenu))
     (add-hook 'nxhtml-mode-hook 'html-imenu-setup nil t))
@@ -1622,13 +1564,37 @@ This is not supposed to be entirely correct."
     (insert src "\" "))
   )
 
+(defun nxhtml-a-tag-do-also ()
+  (insert " href=\"")
+  (rngalt-validate)
+  (insert (nxhtml-read-url t))
+  (insert "\"")
+  (let* ((pre-choices '("_blank" "_parent" "_self" "_top"))
+         (all-choices (reverse (cons "None" (cons "Frame name" pre-choices))))
+         choice
+         (prompt "Target: "))
+      (setq choice (popcmp-completing-read prompt all-choices nil t
+                                           "" nil nil t))
+      (unless (string= choice "None")
+        (insert " target=\"")
+        (cond ((member choice pre-choices)
+               (insert choice "\""))
+              ((string= choice "Frame name")
+               (rngalt-validate)
+               (insert (read-string "Frame name: ") "\""))
+              (t (error "Uh?")))))
+  (insert ">")
+  (rngalt-validate)
+  (insert (read-string "Link title: ")
+          "</a>"))
+
 (defconst nxhtml-complete-tag-do-also
-  '(("a"
-     (lambda ()
-       (insert " href=\"")
-       (rngalt-validate)
-       (insert (nxhtml-read-url t))
-       (insert "\"")))
+  '(("a" nxhtml-a-tag-do-also)
+     ;; (lambda ()
+     ;;   (insert " href=\"")
+     ;;   (rngalt-validate)
+     ;;   (insert (nxhtml-read-url t))
+     ;;   (insert "\"")))
     ("form" nxhtml-form-tag-do-also)
     ("img" nxhtml-img-tag-do-also)
     ("input" nxhtml-input-tag-do-also)

@@ -1238,7 +1238,8 @@ If LOAD"
       (error "Must be in emacs-lisp-mode")))
   (let* ((old-env-load-path (getenv "EMACSLOADPATH"))
          (sub-env-load-path (or old-env-load-path
-                                (mapconcat 'identity load-path ";")))
+                                ;;(mapconcat 'identity load-path ";")))
+                                (mapconcat 'identity load-path path-separator)))
          ;; Fix-me: name of compile log buffer. When should it be
          ;; deleted? How do I bind it to byte-compile-file? Or do I?
          (file-buf (find-buffer-visiting file))
@@ -1255,7 +1256,8 @@ If LOAD"
     ;;   (switch-to-buffer file-buf)
     ;;   (error "Buffer must be saved first: %S" file-buf))
     (dolist (full-p extra-load-path)
-      (setq sub-env-load-path (concat full-p ";" sub-env-load-path)))
+      ;;(setq sub-env-load-path (concat full-p ";" sub-env-load-path)))
+      (setq sub-env-load-path (concat full-p path-separator sub-env-load-path)))
     (unless (get-buffer-window out-buf (selected-frame))
       (if (string= file (buffer-file-name))
           (display-buffer out-buf)
@@ -1268,8 +1270,9 @@ If LOAD"
         (setq default-directory web-vcs-comp-dir)
         (widen)
         (goto-char (point-max))
-        (when (= 0 (buffer-size))
-          (insert (propertize "Web VCS compilation output" 'face 'font-lock-comment-face))
+        (when (or (= 0 (buffer-size))
+                  (not (derived-mode-p 'compilation-mode)))
+          (insert (propertize "\nWeb VCS compilation output" 'font-lock-face 'font-lock-comment-face))
           (compilation-mode)
           (setq font-lock-verbose nil)
           (font-lock-add-keywords nil
@@ -1283,7 +1286,7 @@ If LOAD"
         (if (or (not window-system)
                 (< emacs-major-version 23))
             (byte-compile-file file)
-          (message "web-vcs-byte-compile-file:sub-env-load-path=%s" sub-env-load-path)
+          ;;(message "web-vcs-byte-compile-file:sub-env-load-path=%s" sub-env-load-path)
           (unless (file-exists-p this-emacs-exe)
             (error "Can't find this-emacs-exe=%s" this-emacs-exe))
           (unless (stringp sub-env-load-path) (error "I did it again, sub-env-load-path=%S" sub-env-load-path))
@@ -1297,10 +1300,8 @@ If LOAD"
                             "--file" file
                             "-f" "emacs-lisp-byte-compile"
                              nil)))
-            (insert (format "call-process returned: %s\n" ret)))
-          (when old-env-load-path
-            (unless (stringp old-env-load-path)
-              (error "I did it again, old-env-load-path=%S" old-env-load-path)))
+            ;;(insert (format "call-process returned: %s\n" ret))
+            )
           (setenv "EMACSLOADPATH" old-env-load-path))
         (goto-char start)
         (while (re-search-forward "^\\([a-zA-Z0-9/\._-]+\\):[0-9]+:[0-9]+:" nil t)
@@ -1892,7 +1893,8 @@ resulting load-history entry."
     ;; Fix-me: do not use temp buffer so we can check errors
     (with-temp-buffer
       (let ((old-loadpath (getenv "EMACSLOADPATH"))
-            (new-loadpath (mapconcat 'identity load-path ";"))
+            ;;(new-loadpath (mapconcat 'identity load-path ";"))
+            (new-loadpath (mapconcat 'identity load-path path-separator))
             ret-val)
         (setenv new-loadpath)
         (message "Loading file in batch Emacs...")

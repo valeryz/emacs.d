@@ -463,7 +463,7 @@ command `nxhtml-setup-install'."
                                      (file-name-as-directory
                                       (expand-file-name p nxhtml-install-dir)))
                                    '("tests" "related" "nxhtml" "util" ".")))))
-    (message "nxhtml-byte-compile-file:extra-load-path=%s" extra-load-path)
+    ;; (message "nxhtml-byte-compile-file:extra-load-path=%s" extra-load-path)
     (web-vcs-byte-compile-file file load extra-load-path)))
 
 ;; fix-me: change web-vcs-byte-compile-file instead
@@ -592,7 +592,8 @@ Loading is done if recompiled and LOAD is t."
   (let* ((old-env-load-path (getenv "EMACSLOADPATH"))
          sub-env-load-path
          (elp-list (or (when old-env-load-path
-                         (split-string old-env-load-path ";"))
+                         ;;(split-string old-env-load-path ";"))
+                         (split-string old-env-load-path path-separator))
                        load-path))
          (sub-elp-list nil)
          ret
@@ -609,7 +610,8 @@ Loading is done if recompiled and LOAD is t."
             (unless (and (string= "nxhtml" last-dir)
                          (member last '("util" "test" "nxhtml" "related" "alt")))
               (setq sub-elp-list (cons p sub-elp-list)))))))
-    (setq sub-env-load-path (mapconcat 'identity (reverse sub-elp-list) ";"))
+    ;;(setq sub-env-load-path (mapconcat 'identity (reverse sub-elp-list) ";"))
+    (setq sub-env-load-path (mapconcat 'identity (reverse sub-elp-list) path-separator))
     (setenv "EMACSLOADPATH" sub-env-load-path)
     (setq ret (apply 'call-process this-emacs-exe nil 0 nil "-Q" args))
     (setenv "EMACSLOADPATH" old-env-load-path)

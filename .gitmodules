@@ -5,3 +5,6 @@
 	path = jslint-v8
 	url = git@github.com:valeryz/jslint-v8.git
 
+[submodule "html5-el"]
+	path = html5-el
+	url = https://github.com/hober/html5-el.git

@@ -284,6 +284,9 @@ This also covers inlined style and javascript."
     mumamo-chunk-onjs=
     )))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; eRuby
+
 ;;;###autoload
 (define-mumamo-multi-major-mode eruby-nxhtml-mumamo-mode
   "Turn on multiple major modes for eRuby with main mode `nxhtml-mode'.
@@ -296,6 +299,9 @@ This also covers inlined style and javascript."
     mumamo-chunk-onjs=
     )))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ASP
+
 ;;;###autoload
 (define-mumamo-multi-major-mode asp-nxhtml-mumamo-mode
   "Turn on multiple major modes for ASP with main mode `nxhtml-mode'.
@@ -307,6 +313,9 @@ This also covers inlined style and javascript."
     mumamo-chunk-style=
     mumamo-chunk-onjs=
     )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Mako
 
 ;;;###autoload
 (define-mumamo-multi-major-mode mako-nxhtml-mumamo-mode
