@@ -106,11 +106,10 @@
   (set (make-local-variable 'ac-auto-start) nil))
 
 (define-key python-mode-map "\t" 'ryan-python-tab)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; End Auto Completion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 
 (defun my-python-hook ()
   (set (make-local-variable 'no-cleanup) nil)
@@ -119,7 +118,7 @@
 				  (whitespace-cleanup)))
 	    nil t)
   (column-marker-1 79)
-  ;;			      (add-hook 'before-save-hook '(lambda () (untabify 0 (buffer-end 1))) nil t)
+  ;; (add-hook 'before-save-hook '(lambda () (untabify 0 (buffer-end 1))) nil t)
   (setq whitespace-indent-tabs-mode nil)
   (auto-complete-mode 1)
   (set (make-local-variable 'ac-sources)

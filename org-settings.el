@@ -68,4 +68,3 @@
 (setq org-refile-targets '(("TASKS.org" . (:regexp . "RVS Tasks"))))
 
 (setq org-ditaa-jar-path "/Users/vz/Downloads/ditaa0_9/dita0_9.jar")
-
