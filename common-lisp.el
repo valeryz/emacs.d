@@ -2,19 +2,21 @@
 (require 'paredit)
 
 (setq slime-net-coding-system 'utf-8-unix)
-(setq slime-lisp-implementations
-      '((sbcl ("/Users/vz/clbuild2/clbuild" "lisp") :coding-system utf-8-unix)))
+(setenv "CCL_DEFAULT_DIRECTORY" "/Users/vz/ccl")
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
 
-(load "~/quicklisp/slime-helper.el")
+(setq inferior-lisp-program "/Users/vz/ccl/scripts/ccl64 -K utf-8")
  
 (global-set-key "\C-cs" 'slime-selector)
 
 (add-hook 'lisp-mode-hook '(lambda ()
 			    (setq fill-column 79)
 			    (column-marker-1 79)
-			    (add-hook 'before-save-hook 'whitespace-cleanup nil t)))
+			    (setq whitespace-indent-tabs-mode nil)
+			    ;; (add-hook 'before-save-hook 'whitespace-cleanup nil t)
+			    ))
 
-(setq common-lisp-hyperspec-root "file:/opt/local/share/doc/lisp/HyperSpec-7-0/HyperSpec/")
+(setq common-lisp-hyperspec-root "/Users/vz/HyperSpec-7-0/HyperSpec/")
  
 (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
 (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
@@ -43,9 +45,16 @@
 	(current-buffer))))
 
 
-(defun slime-php/macroexpand (&optional repeatedly)
-  "Display the macro expansion of the form at point.  The form is
-expanded with CL:MACROEXPAND-1 or, if a prefix argument is given, with
-CL:MACROEXPAND."
-  (interactive "P")
-  (slime-eval-macroexpand 'php:php/macroexpand))
+(slime-setup '(slime-fancy))
+
+;; (defun slime-php/macroexpand (&optional repeatedly) 
+;;   "Display the macro expansion of the form at point.  The form is
+;; expanded with CL:MACROEXPAND-1 or, if a prefix argument is given, with
+;; CL:MACROEXPAND."
+;;   (interactive "P")
+;;   (slime-eval-macroexpand 'php:php/macroexpand))
+
+(load "yb.el")
+
+;; (load "/Users/vz/quicklisp/dists/quicklisp/software/gbbopen-20110619-svn/browse-hyperdoc.el")
+;; (load "/Users/vz/quicklisp/dists/quicklisp/software/gbbopen-20110619-svn/gbbopen-indent.el")

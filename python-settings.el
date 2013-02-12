@@ -27,15 +27,15 @@
 
 (load-library "pylint")
 
-(autoload 'pymacs-apply "pymacs")
-(autoload 'pymacs-call "pymacs")
-(autoload 'pymacs-eval "pymacs" nil t)
-(autoload 'pymacs-exec "pymacs" nil t)
-(autoload 'pymacs-load "pymacs" nil t)
+;; (autoload 'pymacs-apply "pymacs")
+;; (autoload 'pymacs-call "pymacs")
+;; (autoload 'pymacs-eval "pymacs" nil t)
+;; (autoload 'pymacs-exec "pymacs" nil t)
+;; (autoload 'pymacs-load "pymacs" nil t)
 
-(require 'pymacs)
-(pymacs-load "ropemacs" "rope-")
-(setq rope-enable-autoimport t)
+;; (require 'pymacs)
+;; (pymacs-load "ropemacs" "rope-")
+;; (setq rope-enable-autoimport t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Auto-completion

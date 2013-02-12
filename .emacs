@@ -2,28 +2,28 @@
 
 (setq inhibit-splash-screen t)
 (tool-bar-mode 0)
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
 (load "~/.emacs.d/el-get/el-get/el-get.el")
 
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+   (lambda (s)
+     (goto-char (point-max))
+     (eval-print-last-sexp))))
+
 (setq el-get-sources
-      '(yasnippet
-	auto-complete
-	markdown-mode
-	moz-repl
-	paredit
-	(:name column-marker
-	       :type http
-	       :url "http://www.emacswiki.org/emacs/download/column-marker.el"
-	       :features column-marker)
-	ecb
-	magit
-	(:name pymacs
-	 :build `(,(concat  "make EMACS=" el-get-emacs)))
-	(:name jslint-v8
+      '((:name jslint-v8
 	       :type git
 	       :url "http://github.com/valeryz/jslint-v8.git"
 	       :features flymake-jslint)))
 
+
 (el-get 'sync)
+
+;; fix lack of redisplay on scroll
+(setq redisplay-dont-pause t)
 
 ;; Column numbering, width and 79 column limit
 (setq fill-column 79)
@@ -32,7 +32,7 @@
 
 ;; Highlight parenthesis
 (show-paren-mode t)
-(setq show-paren-style 'mixed)
+(setq show-paren-style 'parenthesis)
 
 ;; Language environment
 (setenv "LANG" "ru_RU.UTF-8")
@@ -82,6 +82,7 @@
                   (interactive)
                   (org-clock-in '(4))))
 
+(require 'auto-complete-config)
 (global-auto-complete-mode t)
 
 (require 'ido)
@@ -118,6 +119,9 @@
 (load "org-settings")
 (load "js-settings")
 (load "python-settings")
+
+;; (add-to-list 'load-path "/usr/local/Cellar/erlang/R15B02/lib/erlang/lib/tools-2.6.8/emacs")
+;; (require 'erlang)
 
 (setq custom-file "~/.emacs.d/custom.el")
 

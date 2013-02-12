@@ -1,22 +1,24 @@
-((("load-path" .
-	       [0 0 0 0 0 0 0 0 1])
-  ("add-to-list" .
+((("require" .
+	     [1 0 0 0 0 0 0])
+  ("custom-file" .
 		 [1 0 0 0 0 0 0 0 0 0 0])
-  ("el-get-sources" .
-		    [0 0 0 1 0 0 0 0 0 0 0 0 0 0])
-  ("auto-complete" .
-		   [0 0 0 0 1 0 0 0 0 0 0 0 0])
-  ("el-get-init" .
-		 [2 0 0 0 0 0 0 0 0 0 2])
-  ("el-get-cd" .
-	       [0 0 0 0 0 0 1 0 0])
-  ("completion" .
-		[1 0 0 0 0 0 0 0 0 0])
-  ("yasnippet" .
-	       [0 0 0 0 0 0 0 1 0])
-  ("column-number-mode" .
-			[0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0])
   ("load" .
 	  [1 0 0 0])
-  ("custom-file" .
-		 [1 0 0 0 0 0 0 0 0 0 0])))
+  ("column-number-mode" .
+			[0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("yasnippet" .
+	       [0 0 0 0 0 0 0 1 0])
+  ("completion" .
+		[1 0 0 0 0 0 0 0 0 0])
+  ("el-get-cd" .
+	       [0 0 0 0 0 0 1 0 0])
+  ("el-get-init" .
+		 [2 0 0 0 0 0 0 0 0 0 2])
+  ("auto-complete" .
+		   [0 0 0 0 1 0 0 0 0 0 0 0 0])
+  ("el-get-sources" .
+		    [0 0 0 1 0 0 0 0 0 0 0 0 0 0])
+  ("add-to-list" .
+		 [1 0 0 0 0 0 0 0 0 0 0])
+  ("load-path" .
+	       [0 0 0 0 0 0 0 0 1])))
