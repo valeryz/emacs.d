@@ -5,7 +5,13 @@
 (setenv "CCL_DEFAULT_DIRECTORY" "/Users/vz/ccl")
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 
+
+
 (setq inferior-lisp-program "/Users/vz/ccl/scripts/ccl64 -K utf-8")
+
+(setq slime-lisp-implementations
+      '((ccl ("/Users/vz/ccl/scripts/ccl64") :coding-system utf-8-unix)
+	(sbcl ("/Users/vz/sbcl-1.1.8/run-sbcl.sh") :coding-system utf-8-unix)))
  
 (global-set-key "\C-cs" 'slime-selector)
 
@@ -13,8 +19,10 @@
 			    (setq fill-column 79)
 			    (column-marker-1 79)
 			    (setq whitespace-indent-tabs-mode nil)
-			    ;; (add-hook 'before-save-hook 'whitespace-cleanup nil t)
+			    (add-hook 'before-save-hook 'whitespace-cleanup nil t)
+			    (auto-complete-mode 0)
 			    ))
+
 
 (setq common-lisp-hyperspec-root "/Users/vz/HyperSpec-7-0/HyperSpec/")
  
@@ -45,7 +53,7 @@
 	(current-buffer))))
 
 
-(slime-setup '(slime-fancy))
+(slime-setup '(slime-fancy slime-tramp))
 
 ;; (defun slime-php/macroexpand (&optional repeatedly) 
 ;;   "Display the macro expansion of the form at point.  The form is
@@ -56,5 +64,10 @@
 
 (load "yb.el")
 
-;; (load "/Users/vz/quicklisp/dists/quicklisp/software/gbbopen-20110619-svn/browse-hyperdoc.el")
+(load "/Users/vz/gbbopen/browse-hyperdoc.el")
 ;; (load "/Users/vz/quicklisp/dists/quicklisp/software/gbbopen-20110619-svn/gbbopen-indent.el")
+
+
+(defadvice slime-quit-lisp (around alert-sbcl activate)
+  (let ((process (slime-inferior-process (slime-connection))))
+    ad-do-it (process-send-eof process)))

@@ -4,6 +4,9 @@
 (tool-bar-mode 0)
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setenv "YB_DEV" "1")
+
 (load "~/.emacs.d/el-get/el-get/el-get.el")
 
 (unless (require 'el-get nil t)
@@ -66,6 +69,8 @@
 ;; Where to look for info files
 (add-to-list 'Info-default-directory-list "/opt/local/share/info")
 
+(setq dired-isearch-filenames 'dwim)
+
 ;; Global Key Bindings
 
 (when (fboundp 'ns-toggle-fullscreen)
@@ -91,6 +96,8 @@
 ;; shortcut for markdown mode files
 (add-to-list 'auto-mode-alist
              '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist
+             '("\\.pl\\'" . prolog-mode))
 
 ;;; a shortcut to kill all tramp buffers at once
 (require 'ibuffer)
