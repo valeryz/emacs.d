@@ -4,17 +4,17 @@
 (tool-bar-mode 0)
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-(setenv "YB_DEV" "1")
+;; (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+;; (setenv "YB_DEV" "1")
 
-(load "~/.emacs.d/el-get/el-get/el-get.el")
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-(unless (require 'el-get nil t)
-  (url-retrieve
-   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-   (lambda (s)
-     (goto-char (point-max))
-     (eval-print-last-sexp))))
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
 
 (setq el-get-sources
       '((:name jslint-v8
@@ -22,11 +22,22 @@
 	       :url "http://github.com/valeryz/jslint-v8.git"
 	       :features flymake-jslint)))
 
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 
 (el-get 'sync)
 
 ;; fix lack of redisplay on scroll
 (setq redisplay-dont-pause t)
+
+;; customize file backup settings
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.saves"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
 
 ;; Column numbering, width and 79 column limit
 (setq fill-column 79)
@@ -65,9 +76,6 @@
 
 ;; display current function name in the modeline
 (which-function-mode)
-
-;; Where to look for info files
-(add-to-list 'Info-default-directory-list "/opt/local/share/info")
 
 (setq dired-isearch-filenames 'dwim)
 
@@ -121,14 +129,13 @@
 
 ;; Load mode specific settings
 (add-to-list 'load-path "~/.emacs.d/")
+
+(load "google-settings")
 (load "c-settings")
-(load "common-lisp")
+;; (load "common-lisp")
 (load "org-settings")
 (load "js-settings")
 (load "python-settings")
-
-;; (add-to-list 'load-path "/usr/local/Cellar/erlang/R15B02/lib/erlang/lib/tools-2.6.8/emacs")
-;; (require 'erlang)
 
 (setq custom-file "~/.emacs.d/custom.el")
 
