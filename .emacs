@@ -1,4 +1,5 @@
-;; .emacs for valeryz
+;;;
+;;; .emacs for valeryz
 
 (setq inhibit-splash-screen t)
 (tool-bar-mode 0)
@@ -107,15 +108,16 @@
 (add-to-list 'auto-mode-alist
              '("\\.pl\\'" . prolog-mode))
 
-;;; a shortcut to kill all tramp buffers at once
-(require 'ibuffer)
 
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 (defun tramp-buffer-p (buf)
   "is this buffer tramp's one"
   (or (string-match "^\\*tramp" (buffer-name buf))
       (tramp-tramp-file-p (with-current-buffer buf
                             (ibuffer-buffer-file-name)))))
 
+;;; a shortcut to kill all tramp buffers at once
 (defun kill-tramp-buffers ()
   "kill all TRAMP buffers"
   (interactive)
