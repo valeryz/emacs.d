@@ -39,7 +39,7 @@
 
 (setq org-mobile-checksum-binary "/sbin/md5")
 
-(org-remember-insinuate)
+;; (org-remember-insinuate)
 (setq org-default-notes-file (concat org-directory "/" "notes.org"))
 (define-key global-map "\C-cr" 'org-remember)
 
@@ -56,15 +56,15 @@
 	       :description
 	       (url-insert-entities-in-string (plist-get entry :description)))))
 
-(setq org-feed-alist
-           '(("RVS" "https://dev-ng.zoral.com.ua/projects/rvs/report/9?format=rss&USER=vz"
-              "~/org/RVS.org" "RVS Tickets" :parse-entry my-feed-parse-entry)
-	     ("kgp" "https://dev-ng.zoral.com.ua/projects/kgp/report/1?format=rss&USER=vz"
-		   "~/org/KGP.org" "KGP Tickets" :parse-entry my-feed-parse-entry)))
+;; (setq org-feed-alist
+;;            '(("RVS" "https://dev-ng.zoral.com.ua/projects/rvs/report/9?format=rss&USER=vz"
+;;               "~/org/RVS.org" "RVS Tickets" :parse-entry my-feed-parse-entry)
+;; 	     ("kgp" "https://dev-ng.zoral.com.ua/projects/kgp/report/1?format=rss&USER=vz"
+;; 		   "~/org/KGP.org" "KGP Tickets" :parse-entry my-feed-parse-entry)))
 
-(setq org-link-abbrev-alist
-      '(("rvs" . "https://dev-ng.zoral.com.ua/projects/rvs/ticket/")))
+;; (setq org-link-abbrev-alist
+;;       '(("rvs" . "https://dev-ng.zoral.com.ua/projects/rvs/ticket/")))
 
-(setq org-refile-targets '(("TASKS.org" . (:regexp . "RVS Tasks"))))
+;; (setq org-refile-targets '(("TASKS.org" . (:regexp . "RVS Tasks"))))
 
-(setq org-ditaa-jar-path "/Users/vz/Downloads/ditaa0_9/dita0_9.jar")
+;; (setq org-ditaa-jar-path "/Users/vz/Downloads/ditaa0_9/dita0_9.jar")

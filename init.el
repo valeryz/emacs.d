@@ -3,13 +3,31 @@
 
 (setq inhibit-splash-screen t)
 (tool-bar-mode 0)
+(scroll-bar-mode -1)
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 ;; (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 ;; (setenv "YB_DEV" "1")
 
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(require 'package)
 
+(add-to-list 'package-archives
+       '("melpa" . "http://melpa.org/packages/") t)
+
+(package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(defvar myPackages
+  '(better-defaults
+    material-theme))
+
+(mapc #'(lambda (package)
+    (unless (package-installed-p package)
+      (package-install package)))
+      myPackages)
+
+;; el-get
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
       (url-retrieve-synchronously
@@ -107,6 +125,8 @@
              '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist
              '("\\.pl\\'" . prolog-mode))
+(add-to-list 'auto-mode-alist
+             '("\\.m\\'" . octave-mode))
 
 
 (require 'ibuffer)
@@ -116,6 +136,12 @@
   (or (string-match "^\\*tramp" (buffer-name buf))
       (tramp-tramp-file-p (with-current-buffer buf
                             (ibuffer-buffer-file-name)))))
+
+;; recent files
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
 ;;; a shortcut to kill all tramp buffers at once
 (defun kill-tramp-buffers ()
@@ -129,15 +155,19 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-;; Load mode specific settings
-(add-to-list 'load-path "~/.emacs.d/")
 
-(load "google-settings")
-(load "c-settings")
+;; (load "google-settings")
+(defun load-ext (ext)
+  (load (concat (getenv "HOME") "/.emacs.d/" ext)))
+(load-ext "c-settings")
 ;; (load "common-lisp")
-(load "org-settings")
-(load "js-settings")
-(load "python-settings")
+(load-ext "org-settings")
+(load-ext "js-settings")
+(load-ext "python-settings")
+;; G(load-ext "python-settings-elpy")
+
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
 
 (setq custom-file "~/.emacs.d/custom.el")
 

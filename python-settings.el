@@ -127,6 +127,7 @@
   ;; (set (make-local-variable 'ac-find-function) 'ac-python-find)
   ;; (set (make-local-variable 'ac-candidate-function) 'ac-python-candidate)
   ;; (set (make-local-variable 'ac-auto-start) nil)
+  (jedi:ac-setup)
   )
 
 
@@ -136,3 +137,8 @@
   (interactive "p")
   (let ((no-cleanup t))
     (apply #'save-buffer args)))
+
+(setq-default py-shell-name "ipython") 
+(setq-default py-which-bufname "IPython")
+
+;; (elpy-enable)
