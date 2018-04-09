@@ -6,9 +6,6 @@
 (scroll-bar-mode -1)
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-;; (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-;; (setenv "YB_DEV" "1")
-
 (setenv "GOROOT" "/home/vz/go1.8")
 (setenv "PATH" (concat (getenv "PATH") ":" (getenv "GOROOT") "/bin"))
 
@@ -67,7 +64,6 @@
 
 ;; Column numbering, width and 79 column limit
 (setq fill-column 79)
-(column-marker-1 79)
 (column-number-mode 1)
 
 ;; Highlight parenthesis
@@ -120,9 +116,6 @@
                 (lambda ()
                   (interactive)
                   (org-clock-in '(4))))
-
-(require 'auto-complete-config)
-(global-auto-complete-mode t)
 
 (require 'ido)
 (ido-mode t)

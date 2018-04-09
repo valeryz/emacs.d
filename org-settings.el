@@ -25,7 +25,9 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cb" 'org-iswitchb)
+(define-key global-map "\C-cc" 'org-capture)
 
+(setq org-use-speed-commands t)
 
 (setq org-special-ctrl-a/e t)
 (setq org-log-done t)
@@ -33,9 +35,9 @@
 (setq org-insert-mode-line-in-empty-file t)
 
 (setq org-directory "~/org")
-(setq org-agenda-files (mapcar (lambda (fname) (concat org-directory "/" fname))
-			       '("TASKS.org" "pycon.org" "shop.org" "think.org" "KGP.org" "GOALS.org"
-				 "projects.org")))
+(setq org-agenda-files (append (mapcar (lambda (fname) (concat org-directory "/" fname))
+			       '("inbox.org" "projects.org"))
+			       '("~/home/org/home.org")))
 
 (setq org-mobile-checksum-binary "/sbin/md5")
 
