@@ -9,6 +9,9 @@
 ;; (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 ;; (setenv "YB_DEV" "1")
 
+(setenv "GOROOT" "/home/vz/go1.8")
+(setenv "PATH" (concat (getenv "PATH") ":" (getenv "GOROOT") "/bin"))
+
 (require 'package)
 
 (add-to-list 'package-archives
@@ -44,6 +47,10 @@
 (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 
 (el-get 'sync)
+
+;; ace jump
+(require 'ace-jump-mode)
+(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 
 ;; fix lack of redisplay on scroll
 (setq redisplay-dont-pause t)
@@ -169,6 +176,15 @@
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
 (setq custom-file "~/.emacs.d/custom.el")
 
 (load custom-file)
+(put 'erase-buffer 'disabled nil)

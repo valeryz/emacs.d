@@ -138,7 +138,10 @@
   (let ((no-cleanup t))
     (apply #'save-buffer args)))
 
-(setq-default py-shell-name "ipython") 
+(setq-default py-python-command "python3")
+(setq-default py-shell-name "ipython3") 
 (setq-default py-which-bufname "IPython")
 
-;; (elpy-enable)
+(setenv "PYTHONIOENCODING" "UTF-8")
+
+(elpy-enable)
