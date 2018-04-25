@@ -1,4 +1,4 @@
-(require 'flymake-jslint)
+;; (require 'flymake-jslint)
 ;; (require 'js2-mode)
 
 ;; (require 'gjslint)

@@ -7,7 +7,8 @@
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
    ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#e090d7" "#8cc4ff" "#eeeeec"])
- '(custom-enabled-themes (quote (tango-dark)))
+ '(company-go-gocode-command "/home/vz/gobin/gocode")
+ '(custom-enabled-themes (quote (tsdh-dark)))
  '(custom-safe-themes
    (quote
     ("39dd7106e6387e0c45dfce8ed44351078f6acd29a345d8b22e7b8e54ac25bac4" default)))
@@ -17,25 +18,18 @@
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-highlight-indentation elpy-module-yasnippet elpy-module-sane-defaults)))
  '(elpy-rpc-python-command "python3")
  '(erc-nick "valeryz")
+ '(go-eldoc-gocode "/home/vz/gobin/gocode")
+ '(godef-command "/home/vz/gobin/godef")
  '(jslint-v8-shell "/usr/bin/nodejs")
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))))
  '(python-shell-interpreter "ipython3")
  '(python-shell-interpreter-args "--simple-prompt --pprint")
  '(python-shell-interpreter-interactive-arg "")
  '(python-shell-virtualenv-path "/home/vz/projects/mam")
  '(pyvenv-mode t)
-
- '(org-agenda-files
-   (quote
-    ("~/home/org/home.org" "~/org/inbox.org" "~/org/projects.org")))
- '(org-default-priority 49)
- '(org-enable-priority-commands t)
- '(org-enforce-todo-dependencies t)
- '(org-highest-priority 48)
- '(org-lowest-priority 51)
- '(org-modules
-   (quote
-    (org-bbdb org-bibtex org-docview org-gnus org-habit org-info org-irc org-mhe org-rmail org-w3m)))
-
  '(safe-local-variable-values
    (quote
     ((Package . metabang\.moptilities)

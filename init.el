@@ -4,15 +4,23 @@
 (setq inhibit-splash-screen t)
 (tool-bar-mode 0)
 (scroll-bar-mode -1)
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+;;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (setenv "GOROOT" "/home/vz/go1.8")
-(setenv "PATH" (concat (getenv "PATH") ":" (getenv "GOROOT") "/bin"))
-
+(setenv "GOHOME" "/home/vz")
+(setenv "GOBIN" "/home/vz/gobin")
+(setenv "PATH" (concat (getenv "PATH")
+                       ":" (getenv "GOROOT") "/bin"
+                       ":" (getenv "GOBIN")))
 (require 'package)
+(package-initialize)
+
+(exec-path-from-shell-initialize)
 
 (add-to-list 'package-archives
        '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+       '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
 
 (package-initialize)
 (when (not package-archive-contents)
@@ -28,22 +36,22 @@
       myPackages)
 
 ;; el-get
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+;; (unless (require 'el-get nil 'noerror)
+;;   (with-current-buffer
+;;       (url-retrieve-synchronously
+;;        "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+;;     (goto-char (point-max))
+;;     (eval-print-last-sexp)))
 
-(setq el-get-sources
-      '((:name jslint-v8
-	       :type git
-	       :url "http://github.com/valeryz/jslint-v8.git"
-	       :features flymake-jslint)))
+;; (setq el-get-sources
+;;       '((:name jslint-v8
+;; 	       :type git
+;; 	       :url "http://github.com/valeryz/jslint-v8.git"
+;; 	       :features flymake-jslint)))
 
-(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+;; (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 
-(el-get 'sync)
+;; (el-get 'sync)
 
 ;; ace jump
 (require 'ace-jump-mode)
@@ -165,6 +173,7 @@
 (load-ext "js-settings")
 (load-ext "python-settings")
 ;; G(load-ext "python-settings-elpy")
+(load-ext "go-settings")
 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
@@ -181,3 +190,5 @@
 
 (load custom-file)
 (put 'erase-buffer 'disabled nil)
+
+(global-subword-mode)
