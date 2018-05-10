@@ -35,24 +35,6 @@
       (package-install package)))
       myPackages)
 
-;; el-get
-;; (unless (require 'el-get nil 'noerror)
-;;   (with-current-buffer
-;;       (url-retrieve-synchronously
-;;        "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-;;     (goto-char (point-max))
-;;     (eval-print-last-sexp)))
-
-;; (setq el-get-sources
-;;       '((:name jslint-v8
-;; 	       :type git
-;; 	       :url "http://github.com/valeryz/jslint-v8.git"
-;; 	       :features flymake-jslint)))
-
-;; (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
-
-;; (el-get 'sync)
-
 ;; ace jump
 (require 'ace-jump-mode)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
