@@ -148,7 +148,7 @@
 
 ;; (load "google-settings")
 (defun load-ext (ext)
-  (load (concat (getenv "HOME") "/.emacs.d/" ext)))
+  (load (concat (getenv "HOME") "/.emacs.d/etc/" ext)))
 (load-ext "c-settings")
 ;; (load "common-lisp")
 (load-ext "org-settings")
