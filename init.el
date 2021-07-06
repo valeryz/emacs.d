@@ -1,183 +1,131 @@
-;;;
-;;; .emacs for valeryz
-
+;; Basics
 (setq inhibit-splash-screen t)
+(setq inhibit-startup-message t)
+(setq visible-bell nil)
 (tool-bar-mode 0)
 (scroll-bar-mode -1)
-;;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(recentf-mode 1)
 
-(setenv "GOROOT" "/home/vz/go1.8")
-(setenv "GOPATH" "/home/vz")
-(setenv "GOBIN" "/home/vz/gobin")
-(setenv "PATH" (concat (getenv "PATH")
-                       ":" (getenv "GOROOT") "/bin"
-                       ":" (getenv "GOBIN")))
+;; Backup files
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+;; Mac Keyboard
+(setq mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none)
+
+;; Font
+(set-face-attribute 'default nil :font "Menlo" :height 140)
+(load-theme 'wombat)
+
+;; Package setup
 (require 'package)
-(package-initialize)
 
-(exec-path-from-shell-initialize)
+(setenv "PATH" (concat "/Users/vz/.cargo/bin:" (getenv "PATH")))
 
-(add-to-list 'package-archives
-       '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives
-       '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
-(when (not package-archive-contents)
+(unless package-archive-contents
   (package-refresh-contents))
 
-(defvar myPackages
-  '(better-defaults
-    material-theme))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+		      
+(require 'use-package)
+(setq use-package-always-ensure t)
 
-(mapc #'(lambda (package)
-    (unless (package-installed-p package)
-      (package-install package)))
-      myPackages)
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper))
+  :config
+  (ivy-mode t)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-wrap t)
+  (setq ivy-count-format "(%d/%d)")
+  (setq enable-recursive-minibuffers t))
 
-;; ace jump
-(require 'ace-jump-mode)
-(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(use-package counsel
+  :diminish
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x f" . counsel-find-file)))
 
-;; fix lack of redisplay on scroll
-(setq redisplay-dont-pause t)
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
-;; customize file backup settings
-(setq
-   backup-by-copying t      ; don't clobber symlinks
-   backup-directory-alist
-    '(("." . "~/.saves"))    ; don't litter my fs tree
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 2
-   version-control t)       ; use versioned backups
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init
+  (setq projectile-switch-project-action #'projectile-dired))
 
-;; Column numbering, width and 79 column limit
-(setq fill-column 79)
-(column-number-mode 1)
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-;; Highlight parenthesis
-(show-paren-mode t)
-(setq show-paren-style 'parenthesis)
-
-;; Language environment
-(setenv "LANG" "ru_RU.UTF-8")
-(set-language-environment "UTF-8")
-(setq default-input-method "russian-computer")
-;; All UTF-8
-(prefer-coding-system       'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(setq default-buffer-file-coding-system 'utf-8)
-
-;; Uniquify
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'reverse)
-;;(setq uniquify-separator "/")
-(setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
-(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers)
-
-;; Some scrolling settings
-(setq scroll-preserve-screen-position t)
-(setq scroll-margin 2)
-(setq isearch-allow-scroll t)
-
-;; Start Emacs Server
-(server-start)
-
-;; display current function name in the modeline
-(which-function-mode)
-
-(setq dired-isearch-filenames 'dwim)
-
-;; Global Key Bindings
-
-(when (fboundp 'ns-toggle-fullscreen)
-  (global-set-key (kbd "<s-return>") 'ns-toggle-fullscreen))
-
-(global-set-key (kbd "<f6>")   ;; F6 will stop the clock
-                (lambda () (interactive) (org-clock-out)
-                        (save-excursion
-                          (set-buffer (get-buffer "TASKS.org"))
-                          (save-buffer))))
-
-(global-set-key (kbd "<f5>")   ;; F5 will start the clock
-                (lambda ()
-                  (interactive)
-                  (org-clock-in '(4))))
-
-(require 'ido)
-(ido-mode t)
-
-;; shortcut for markdown mode files
-(add-to-list 'auto-mode-alist
-             '("\\.md\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist
-             '("\\.pl\\'" . prolog-mode))
-(add-to-list 'auto-mode-alist
-             '("\\.m\\'" . octave-mode))
+(setq-default indent-tabs-mode nil)
 
 
-(require 'ibuffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-(defun tramp-buffer-p (buf)
-  "is this buffer tramp's one"
-  (or (string-match "^\\*tramp" (buffer-name buf))
-      (tramp-tramp-file-p (with-current-buffer buf
-                            (ibuffer-buffer-file-name)))))
+(defun rust-settings ()
+  "Rust settings"
+  (setq indent-tabs-mode nil)
+  (setq rust-indent-unit 4))
 
-;; recent files
-(require 'recentf)
-(recentf-mode 1)
-(setq recentf-max-menu-items 25)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+(require 'lsp-rust)
 
-;;; a shortcut to kill all tramp buffers at once
-(defun kill-tramp-buffers ()
-  "kill all TRAMP buffers"
-  (interactive)
-  (dolist (buf (buffer-list))
-    (when (tramp-buffer-p buf)
-      (kill-buffer buf))))
+(use-package lsp-mode
+  :ensure t
+  :defer t
+  :hook (lsp-mode . (lambda ()
+                      (let ((lsp-keymap-prefix "C-c l"))
+                        (lsp-enable-which-key-integration))))
+  :init
+  (setq lsp-keep-workspace-alive nil
+        lsp-signature-doc-lines 5
+        lsp-idle-delay 0.5
+        lsp-prefer-capf t
+        lsp-client-packages nil)
+  :config
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
 
-(put 'narrow-to-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
+(use-package rust-mode
+  :hook
+  (rust-mode . lsp-deferred)
+  (rust-mode . rust-settings))
+
+(use-package company
+  :init (global-company-mode)
+  :diminish company-mode)
 
 
-;; (load "google-settings")
-(defun load-ext (ext)
-  (load (concat (getenv "HOME") "/.emacs.d/etc/" ext)))
-(load-ext "c-settings")
-;; (load "common-lisp")
-(load-ext "org-settings")
-(load-ext "js-settings")
-(load-ext "python-settings")
-;; G(load-ext "python-settings-elpy")
-(load-ext "go-settings")
+(use-package which-key
+  :config (which-key-mode))
 
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
+(use-package lsp-ivy)
 
-(prefer-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
+(use-package solidity-mode)
 
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+(use-package yasnippet)
 
-(setq custom-file "~/.emacs.d/custom.el")
-
-(load custom-file)
-(put 'erase-buffer 'disabled nil)
-
-(global-subword-mode)
-
-;; Multiple cursors
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
