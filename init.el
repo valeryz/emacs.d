@@ -6,6 +6,8 @@
 (scroll-bar-mode -1)
 (recentf-mode 1)
 
+(load "/Users/vz/code/motoko/emacs/init.el")
+
 ;; Backup files
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
@@ -31,7 +33,6 @@
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
-(package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -114,6 +115,7 @@
 
 (use-package solidity-mode)
 
+
 (use-package yasnippet)
 
 (custom-set-variables
@@ -122,7 +124,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
