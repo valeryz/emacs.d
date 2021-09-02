@@ -5,6 +5,7 @@
 (tool-bar-mode 0)
 (scroll-bar-mode -1)
 (recentf-mode 1)
+(set-fringe-mode 2)
 
 (load "/Users/vz/code/motoko/emacs/init.el")
 
@@ -32,6 +33,8 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
+
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (unless package-archive-contents
   (package-refresh-contents))
