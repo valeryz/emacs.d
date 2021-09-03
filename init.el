@@ -5,6 +5,9 @@
 (tool-bar-mode 0)
 (scroll-bar-mode -1)
 (recentf-mode 1)
+(set-fringe-mode 2)
+
+(load "/Users/vz/code/motoko/emacs/init.el")
 
 ;; Backup files
 (setq backup-directory-alist
@@ -31,12 +34,14 @@
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
-(package-initialize)
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
 (unless package-archive-contents
   (package-refresh-contents))
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
+
 		      
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -51,10 +56,14 @@
   (setq ivy-count-format "(%d/%d)")
   (setq enable-recursive-minibuffers t))
 
+(use-package ivy-rich
+  :init (ivy-rich-mode 1))
+
 (use-package counsel
   :diminish
   :bind (("M-x" . counsel-M-x)
-	 ("C-x f" . counsel-find-file)))
+	 ("C-x f" . counsel-find-file)
+         ("C-x b" . counsel-ibuffer)))
 
 (use-package doom-modeline
   :ensure t
@@ -108,6 +117,8 @@
   :init (global-company-mode)
   :diminish company-mode)
 
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package which-key
   :config (which-key-mode))
@@ -115,6 +126,7 @@
 (use-package lsp-ivy)
 
 (use-package solidity-mode)
+
 
 (use-package yasnippet)
 
@@ -126,7 +138,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yaml yaml-mode adoc-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
