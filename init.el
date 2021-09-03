@@ -80,8 +80,6 @@
   (setq indent-tabs-mode nil)
   (setq rust-indent-unit 4))
 
-(require 'lsp-rust)
-
 (use-package lsp-mode
   :ensure t
   :defer t
@@ -96,6 +94,10 @@
         lsp-client-packages nil)
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
+
+(require 'lsp-rust)
+
+(use-package yaml-mode)
 
 (use-package rust-mode
   :hook
@@ -116,13 +118,15 @@
 
 (use-package yasnippet)
 
+(use-package adoc-mode)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(yaml yaml-mode adoc-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
