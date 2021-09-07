@@ -7,7 +7,7 @@
 (recentf-mode 1)
 (set-fringe-mode 2)
 
-(load "/Users/vz/code/motoko/emacs/init.el")
+(load (concat (getenv "HOME") "/code/motoko/emacs/init.el"))
 
 ;; Backup files
 (setq backup-directory-alist
