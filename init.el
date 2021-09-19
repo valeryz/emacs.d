@@ -66,7 +66,9 @@
   :diminish
   :bind (("M-x" . counsel-M-x)
          ("C-x f" . counsel-find-file)
-         ("C-x b" . counsel-ibuffer)))
+         ("C-x b" . counsel-ibuffer)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history)))
 
 (use-package doom-modeline
   :ensure t
