@@ -23,7 +23,10 @@
 
 ;; Font
 (set-face-attribute 'default nil :font "Menlo" :height 140)
-(load-theme 'wombat)
+
+(use-package zenburn-theme)
+;;(load-theme 'wombat)
+(load-theme 'zenburn)
 
 ;; Package setup
 (require 'package)
@@ -31,8 +34,8 @@
 (setenv "PATH" (concat "/Users/vz/.cargo/bin:" (getenv "PATH")))
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -42,7 +45,7 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
-		      
+
 (require 'use-package)
 (setq use-package-always-ensure t)
 
@@ -62,7 +65,7 @@
 (use-package counsel
   :diminish
   :bind (("M-x" . counsel-M-x)
-	 ("C-x f" . counsel-find-file)
+         ("C-x f" . counsel-find-file)
          ("C-x b" . counsel-ibuffer)))
 
 (use-package doom-modeline
@@ -96,11 +99,14 @@
                       (let ((lsp-keymap-prefix "C-c l"))
                         (lsp-enable-which-key-integration))))
   :init
-  (setq lsp-keep-workspace-alive nil
-        lsp-signature-doc-lines 5
-        lsp-idle-delay 0.5
-        lsp-prefer-capf t
-        lsp-client-packages nil)
+  (progn
+    (setq lsp-keep-workspace-alive nil
+          lsp-signature-doc-lines 5
+          lsp-idle-delay 0.5
+          lsp-prefer-capf t
+          lsp-client-packages nil)
+    (require 'dap-chrome)
+    (yas-global-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
 
@@ -132,13 +138,21 @@
 
 (use-package adoc-mode)
 
+(use-package json-mode)
+
+(use-package dap-mode)
+
+(use-package rjsx-mode)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
  '(package-selected-packages
-   '(yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
