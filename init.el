@@ -1,4 +1,8 @@
-;; Basics
+;;; init.el --- my emacs configuration.
+;;; Commentary:
+;;; This is for both work and home.
+;;; 
+;;; Code:
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
 (setq visible-bell nil)
@@ -24,14 +28,25 @@
 ;; Font
 (set-face-attribute 'default nil :font "Menlo" :height 140)
 
-(use-package zenburn-theme)
-;;(load-theme 'wombat)
-(load-theme 'zenburn)
 
 ;; Package setup
 (require 'package)
+(setq package-selected-packages
+      '(rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich
+                  adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode
+                  motoko-mode yasnippet yasnippets solidity-mode company
+                  company-mode lsp-ivy which-key projectile rust-mode magit
+                  doom-modeline counsel ivy command-log-mode use-package))
 
-(setenv "PATH" (concat "/Users/vz/.cargo/bin:" (getenv "PATH")))
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+(use-package zenburn-theme)
+;;(load-theme 'wombat)
+(load-theme 'zenburn t)
+
+
+(setenv "PATH" (concat "/Users/vz/.cargo/bin:/usr/local/bin:/opt/homebrew/bin" (getenv "PATH")))
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -46,8 +61,9 @@
   (package-install 'use-package))
 
 
-(require 'use-package)
-(setq use-package-always-ensure t)
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
 
 (use-package ivy
   :diminish
@@ -90,16 +106,24 @@
 
 
 (defun rust-settings ()
-  "Rust settings"
+  "Rust settings."
   (setq indent-tabs-mode nil)
   (setq rust-indent-unit 4))
 
+
+(use-package dap-mode
+  :ensure t)
+
+(use-package rjsx-mode
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t
-  :defer t
-  :hook (lsp-mode . (lambda ()
+  :hook
+  ((js-mode . lsp)
+   (lsp-mode . (lambda ()
                       (let ((lsp-keymap-prefix "C-c l"))
-                        (lsp-enable-which-key-integration))))
+                        (lsp-enable-which-key-integration)))))
   :init
   (progn
     (setq lsp-keep-workspace-alive nil
@@ -108,13 +132,17 @@
           lsp-prefer-capf t
           lsp-client-packages nil)
     (require 'dap-chrome)
+    (require 'lsp-rust)
+    (require 'lsp-javascript)
     (yas-global-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
 
-(require 'lsp-rust)
+(use-package lsp-treemacs)
 
-(use-package yaml-mode)
+
+(use-package yaml-mode
+  :ensure t)
 
 (use-package rust-mode
   :hook
@@ -135,16 +163,15 @@
 
 (use-package solidity-mode)
 
+(use-package dap-mode)
+
+(use-package rjsx-mode)
 
 (use-package yasnippet)
 
 (use-package adoc-mode)
 
 (use-package json-mode)
-
-(use-package dap-mode)
-
-(use-package rjsx-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
