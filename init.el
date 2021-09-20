@@ -174,6 +174,20 @@
 
 (use-package json-mode)
 
+(defun copy-current-buffer-file-name ()
+  (interactive)
+  (shell-command (concat "echo " (buffer-file-name) " | pbcopy")))
+
+(global-set-key (kbd "C-x M-f") 'copy-current-buffer-file-name)
+
+(defun copy-ic-projectile-name ()
+  (interactive)
+  (shell-command (concat "echo 'https://gitlab.com/dfinity-lab/core/ic/-/tree/master/'" (file-relative-name buffer-file-name (projectile-project-root)) " | pbcopy")))
+
+
+(global-set-key (kbd "C-c p [") 'copy-ic-projectile-name)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
