@@ -96,7 +96,8 @@
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
-  (setq projectile-switch-project-action #'projectile-dired))
+  (setq projectile-switch-project-action #'projectile-dired)
+  (setq projectile-use-git-grep t))
 
 (use-package magit
   :commands (magit-status magit-get-current-branch)
