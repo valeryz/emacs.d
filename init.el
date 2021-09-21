@@ -46,7 +46,8 @@
 (load-theme 'zenburn t)
 
 
-(setenv "PATH" (concat "/Users/vz/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:" (getenv "PATH")))
+(setenv "PATH" (concat (getenv "HOME")
+                       "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:" (getenv "PATH")))
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
