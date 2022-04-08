@@ -165,6 +165,11 @@
   (rust-mode . lsp-deferred)
   (rust-mode . rust-settings))
 
+;;(use-package flycheck-rust)
+
+;; (with-eval-after-load 'rust-mode
+;;   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
 (use-package company
   :init (global-company-mode)
   :diminish company-mode)
@@ -189,6 +194,30 @@
 
 (use-package json-mode)
 
+(use-package vue-mode)
+
+(add-hook 'c-mode-hook 'counsel-gtags-mode)
+(add-hook 'c++-mode-hook 'counsel-gtags-mode)
+
+;; C. Add the following code in .emacs.d/init.el
+;; js-comint                                                                                                    
+(require 'js-comint)
+(setq inferior-js-program-command "node2")
+(add-hook 'js2-mode-hook '(lambda ()
+                            (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+                            (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+                            (local-set-key "\C-cb" 'js-send-buffer)
+                            (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+                            (local-set-key "\C-cl" 'js-load-file-and-go)
+                            (local-set-key "\C-c\C-r" 'js-send-region)
+                            ))
+
+(with-eval-after-load 'counsel-gtags
+  (define-key counsel-gtags-mode-map (kbd "M-.") 'counsel-gtags-find-definition)
+  (define-key counsel-gtags-mode-map (kbd "M-r") 'counsel-gtags-find-reference)
+  (define-key counsel-gtags-mode-map (kbd "M-s") 'counsel-gtags-find-symbol)
+  (define-key counsel-gtags-mode-map (kbd "M-,") 'counsel-gtags-go-backward))
+
 (defun copy-current-buffer-file-name ()
   (interactive)
   (shell-command (concat "echo " (buffer-file-name) " | pbcopy")))
@@ -197,11 +226,6 @@
 
 (global-set-key (kbd "C-c r g") 'counsel-rg)
 
-(defun copy-ic-projectile-name ()
-  (interactive)
-  (shell-command (concat "echo 'https://gitlab.com/dfinity-lab/core/ic/-/tree/master/'" (file-relative-name buffer-file-name (projectile-project-root)) " | pbcopy")))
-
-;; (global-set-key (kbd "C-c p [") 'copy-ic-projectile-name)
 
 (which-key-mode)
 (add-hook 'c-mode-hook 'lsp)
@@ -220,8 +244,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
+ '(lsp-lens-enable t)
  '(package-selected-packages
-   '(rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
