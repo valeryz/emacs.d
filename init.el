@@ -11,7 +11,7 @@
 (recentf-mode 1)
 (set-fringe-mode 2)
 
-(load (concat (getenv "HOME") "/code/motoko/emacs/init.el"))
+;; (load (concat (getenv "HOME") "/code/motoko/emacs/init.el"))
 
 ;; Backup files
 (setq backup-directory-alist
@@ -26,13 +26,24 @@
       mac-option-modifier 'none)
 
 ;; Font
-(set-face-attribute 'default nil :font "Menlo" :height 140)
+;; (set-face-attribute 'default nil :font "Menlo" :height 140)
 
 
 ;; Package setup
 (require 'package)
+(add-to-list 'package-archives '("GNU ELPA" . "https://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
+(package-initialize)
+(package-refresh-contents)
+
+(package-install 'flycheck)
+
+(global-flycheck-mode)
+
 (setq package-selected-packages
-      '(rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich
+      '(rjsx-mode js-mode zenburn json-mode yaml yaml-mode ivy-rich
                   adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode
                   motoko-mode yasnippet yasnippets solidity-mode company
                   company-mode lsp-ivy which-key projectile rust-mode magit
@@ -61,6 +72,8 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
+;; Make sure .tpp files are interpreted as C++
+(add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
 
 (use-package flycheck
   :ensure t
@@ -113,8 +126,8 @@
   (setq rust-indent-unit 4))
 
 
-(use-package dap-mode
-  :ensure t)
+;; (use-package dap-mode
+;;   :ensure t)
 
 (use-package rjsx-mode
   :ensure t)
@@ -136,6 +149,7 @@
     (require 'dap-chrome)
     (require 'lsp-rust)
     (require 'lsp-javascript)
+    (require 'lsp-clangd)
     (yas-global-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
@@ -181,12 +195,22 @@
 
 (global-set-key (kbd "C-x M-f") 'copy-current-buffer-file-name)
 
+(global-set-key (kbd "C-c r g") 'counsel-rg)
+
 (defun copy-ic-projectile-name ()
   (interactive)
   (shell-command (concat "echo 'https://gitlab.com/dfinity-lab/core/ic/-/tree/master/'" (file-relative-name buffer-file-name (projectile-project-root)) " | pbcopy")))
 
+;; (global-set-key (kbd "C-c p [") 'copy-ic-projectile-name)
 
-(global-set-key (kbd "C-c p [") 'copy-ic-projectile-name)
+(which-key-mode)
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
+
+(with-eval-after-load 'lsp-mode
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+  (require 'dap-cpptools)
+  (yas-global-mode))
 
 
 (custom-set-variables
