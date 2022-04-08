@@ -46,7 +46,8 @@
 (load-theme 'zenburn t)
 
 
-(setenv "PATH" (concat "/Users/vz/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:" (getenv "PATH")))
+(setenv "PATH" (concat (getenv "HOME")
+                       "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:" (getenv "PATH")))
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -96,7 +97,8 @@
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
-  (setq projectile-switch-project-action #'projectile-dired))
+  (setq projectile-switch-project-action #'projectile-dired)
+  (setq projectile-use-git-grep t))
 
 (use-package magit
   :commands (magit-status magit-get-current-branch)
@@ -201,6 +203,14 @@
   (define-key counsel-gtags-mode-map (kbd "M-r") 'counsel-gtags-find-reference)
   (define-key counsel-gtags-mode-map (kbd "M-s") 'counsel-gtags-find-symbol)
   (define-key counsel-gtags-mode-map (kbd "M-,") 'counsel-gtags-go-backward))
+
+(defun copy-current-buffer-file-name ()
+  (interactive)
+  (shell-command (concat "echo " (buffer-file-name) " | pbcopy")))
+
+(global-set-key (kbd "C-x M-f") 'copy-current-buffer-file-name)
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
