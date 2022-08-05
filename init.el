@@ -31,20 +31,19 @@
 
 ;; Package setup
 (require 'package)
-(add-to-list 'package-archives '("GNU ELPA" . "https://elpa.gnu.org/packages/") t)
+;; (add-to-list 'package-archives '("GNU ELPA" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
 (package-initialize)
 (package-refresh-contents)
 
-(package-install 'flycheck)
-
 (global-flycheck-mode)
 
 (setq package-selected-packages
       '(rjsx-mode js-mode zenburn json-mode yaml yaml-mode ivy-rich
-                  adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode
+                  adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui
+                  swift-mode
                   motoko-mode yasnippet yasnippets solidity-mode company
                   company-mode lsp-ivy which-key projectile rust-mode magit
                   doom-modeline counsel ivy command-log-mode use-package))
@@ -56,9 +55,14 @@
 ;;(load-theme 'wombat)
 (load-theme 'zenburn t)
 
+;; Clang stuff
+(require 'clang-format)
+(setq clang-format-style "file")
 
 (setenv "PATH" (concat (getenv "HOME")
-                       "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:" (getenv "PATH")))
+                       "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:"
+                       "/home/valeryz/.pyenv/libexec:"
+                       (getenv "PATH")))
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -74,6 +78,7 @@
 
 ;; Make sure .tpp files are interpreted as C++
 (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . js-mode))
 
 (use-package flycheck
   :ensure t
@@ -150,6 +155,8 @@
     (require 'lsp-rust)
     (require 'lsp-javascript)
     (require 'lsp-clangd)
+    (require 'lsp-json)
+    (require 'lsp-go)
     (yas-global-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
@@ -230,11 +237,16 @@
 (which-key-mode)
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'c++-mode-hook 'lsp)
+(add-hook 'go-mode-hook 'lsp-deferred)
 
 (with-eval-after-load 'lsp-mode
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
   (require 'dap-cpptools)
   (yas-global-mode))
+
+
+(require 'pyenv-mode)
+(require 'pyenv-mode-auto)
 
 
 (custom-set-variables
@@ -245,11 +257,15 @@
  '(custom-safe-themes
    '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
  '(lsp-lens-enable t)
+ '(lsp-log-io t)
  '(package-selected-packages
-   '(js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package))
+ '(python-shell-interpreter
+   "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'narrow-to-region 'disabled nil)
