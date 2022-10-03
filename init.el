@@ -31,12 +31,12 @@
 
 ;; Package setup
 (require 'package)
-;; (add-to-list 'package-archives '("GNU ELPA" . "https://elpa.gnu.org/packages/") t)
+(add-to-list 'package-archives '("GNU ELPA" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
 (package-initialize)
-(package-refresh-contents)
+;; (package-refresh-contents)
 
 (global-flycheck-mode)
 
@@ -45,7 +45,7 @@
                   adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui
                   swift-mode
                   motoko-mode yasnippet yasnippets solidity-mode company
-                  company-mode lsp-ivy which-key projectile rust-mode magit
+                  company-mode lsp-ivy which-key projectile rustic magit
                   doom-modeline counsel ivy command-log-mode use-package))
 
 (require 'use-package)
@@ -83,6 +83,26 @@
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
+
+;; (use-package rustic
+;;   :ensure
+;;   :bind (:map rustic-mode-map
+;;               ("M-j" . lsp-ui-imenu)
+;;               ("M-?" . lsp-find-references)
+;;               ("C-c C-c l" . flycheck-list-errors)
+;;               ("C-c C-c a" . lsp-execute-code-action)
+;;               ("C-c C-c r" . lsp-rename)
+;;               ("C-c C-c q" . lsp-workspace-restart)
+;;               ("C-c C-c Q" . lsp-workspace-shutdown)
+;;               ("C-c C-c s" . lsp-rust-analyzer-status))
+;;   :config
+;;   ;; uncomment for less flashiness
+;;   ;; (setq lsp-eldoc-hook nil)
+;;   ;; (setq lsp-enable-symbol-highlighting nil)
+;;   ;; (setq lsp-signature-auto-activate nil)
+
+;;   ;; comment to disable rustfmt on save
+;;   (setq rustic-format-on-save t))
 
 (use-package ivy
   :diminish
@@ -131,14 +151,29 @@
   (setq rust-indent-unit 4))
 
 
-;; (use-package dap-mode
-;;   :ensure t)
+(use-package dap-mode
+   :ensure t)
 
 (use-package rjsx-mode
   :ensure t)
 
 (use-package lsp-mode
   :ensure t
+  :commands lsp
+  :custom
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  ;; enable / disable the hints as you prefer:
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints nil)
+  (lsp-rust-analyzer-display-reborrow-hints nil)
+  :config
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   :hook
   ((js-mode . lsp)
    (lsp-mode . (lambda ()
@@ -157,9 +192,17 @@
     (require 'lsp-clangd)
     (require 'lsp-json)
     (require 'lsp-go)
-    (yas-global-mode))
+    (yas-global-mode)) 
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
+
+(use-package lsp-ui
+  :ensure
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-enable nil))
 
 (use-package lsp-treemacs)
 
@@ -246,7 +289,7 @@
 
 
 (require 'pyenv-mode)
-(require 'pyenv-mode-auto)
+;; (require 'pyenv-mode-auto)
 
 
 (custom-set-variables
@@ -258,8 +301,9 @@
    '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
  '(lsp-lens-enable t)
  '(lsp-log-io t)
+ '(lsp-rust-server 'rust-analyzer)
  '(package-selected-packages
-   '(pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package))
+   '(rustic string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
  '(python-shell-interpreter
    "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python"))
 (custom-set-faces
