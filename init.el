@@ -38,15 +38,19 @@
 (package-initialize)
 ;; (package-refresh-contents)
 
-(global-flycheck-mode)
+;; (global-flycheck-mode)
 
-(setq package-selected-packages
-      '(rjsx-mode js-mode zenburn json-mode yaml yaml-mode ivy-rich
-                  adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui
-                  swift-mode
-                  motoko-mode yasnippet yasnippets solidity-mode company
-                  company-mode lsp-ivy which-key projectile rustic magit
-                  doom-modeline counsel ivy command-log-mode use-package))
+;; (setq package-selected-packages
+;;       '(rjsx-mode js-mode zenburn json-mode yaml yaml-mode ivy-rich
+;;                   adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui
+;;                   swift-mode
+;;                   motoko-mode yasnippet yasnippets solidity-mode company
+;;                   company-mode lsp-ivy which-key projectile rustic magit
+;;                   doom-modeline counsel ivy command-log-mode use-package))
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -56,11 +60,12 @@
 (load-theme 'zenburn t)
 
 ;; Clang stuff
-(require 'clang-format)
-(setq clang-format-style "file")
+;; (require 'clang-format)
+;; (setq clang-format-style "file")
 
 (setenv "PATH" (concat (getenv "HOME")
                        "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:"
+                       (concat (getenv "HOME") "/go/bin:")
                        "/home/valeryz/.pyenv/libexec:"
                        (getenv "PATH")))
 
@@ -84,25 +89,33 @@
   :ensure t
   :init (global-flycheck-mode))
 
-;; (use-package rustic
-;;   :ensure
-;;   :bind (:map rustic-mode-map
-;;               ("M-j" . lsp-ui-imenu)
-;;               ("M-?" . lsp-find-references)
-;;               ("C-c C-c l" . flycheck-list-errors)
-;;               ("C-c C-c a" . lsp-execute-code-action)
-;;               ("C-c C-c r" . lsp-rename)
-;;               ("C-c C-c q" . lsp-workspace-restart)
-;;               ("C-c C-c Q" . lsp-workspace-shutdown)
-;;               ("C-c C-c s" . lsp-rust-analyzer-status))
-;;   :config
-;;   ;; uncomment for less flashiness
-;;   ;; (setq lsp-eldoc-hook nil)
-;;   ;; (setq lsp-enable-symbol-highlighting nil)
-;;   ;; (setq lsp-signature-auto-activate nil)
+(use-package go-mode
+  :ensure t)
 
-;;   ;; comment to disable rustfmt on save
-;;   (setq rustic-format-on-save t))
+(add-to-list 'exec-path "/Users/valeryz/bin")
+
+
+(use-package rustic
+  :ensure
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status))
+  :config
+  ;; uncomment for less flashiness
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-enable-symbol-highlighting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t))
+
+(setq rustic-lsp-server 'rust-analyzer)
 
 (use-package ivy
   :diminish
@@ -172,6 +185,7 @@
   (lsp-rust-analyzer-display-closure-return-type-hints t)
   (lsp-rust-analyzer-display-parameter-hints nil)
   (lsp-rust-analyzer-display-reborrow-hints nil)
+  (lsp-rust-analyzer-rustfmt-extra-args ["--edition" "2021"])
   :config
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   :hook
@@ -251,7 +265,7 @@
 
 ;; C. Add the following code in .emacs.d/init.el
 ;; js-comint                                                                                                    
-(require 'js-comint)
+;; (require 'js-comint)
 (setq inferior-js-program-command "node2")
 (add-hook 'js2-mode-hook '(lambda ()
                             (local-set-key "\C-x\C-e" 'js-send-last-sexp)
@@ -288,8 +302,9 @@
   (yas-global-mode))
 
 
-(require 'pyenv-mode)
+;; (require 'pyenv-mode)
 ;; (require 'pyenv-mode-auto)
+
 
 
 (custom-set-variables
@@ -301,15 +316,20 @@
    '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
  '(lsp-lens-enable t)
  '(lsp-log-io t)
+ '(lsp-rust-analyzer-rustfmt-extra-args ["--edition" "2021"])
  '(lsp-rust-server 'rust-analyzer)
  '(package-selected-packages
-   '(rustic string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
+   '(protobuf-mode clang-format rustic string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
  '(python-shell-interpreter
-   "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python"))
+   "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python")
+ '(rustic-ansi-faces
+   ["black" "red1" "green3" "yellow3" "lightblue" "magenta3" "cyan3" "white"]))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(rustic-compilation-column ((t (:inherit compilation-column-number))))
+ '(rustic-compilation-line ((t (:foreground "LimeGreen")))))
+
 (put 'narrow-to-region 'disabled nil)
