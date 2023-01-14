@@ -62,6 +62,9 @@
   (package-install 'use-package))
 
 
+(add-to-list 'load-path "/Users/vz/.opam/default/share/emacs/site-lisp/")
+
+
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
@@ -90,6 +93,16 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+
+
+(setq scilla-mode-path "/Users/vz/scilla/misc/emacs-mode/scilla-mode.el")
+(setq scilla-bin-path "/Users/vz/scilla/scilla-checkers-and-runners/bin")
+(setq scilla-stdlib-path "/Users/vz/scilla/stdlib")
+
+
+(use-package scilla
+  :load-path (lambda () scilla-mode-path))
+
 
 (use-package projectile
   :diminish projectile-mode
@@ -136,6 +149,7 @@
     (require 'dap-chrome)
     (require 'lsp-rust)
     (require 'lsp-javascript)
+    (require 'lsp-json)
     (yas-global-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
@@ -210,7 +224,10 @@
 
 (global-set-key (kbd "C-x M-f") 'copy-current-buffer-file-name)
 
-
+;; Ocaml
+(add-to-list 'load-path "/Users/vz/.opam/cs3110-2022fa/share/emacs/site-lisp")
+ (load "/Users/vz/.opam/cs3110-2022fa/share/emacs/site-lisp/tuareg-site-file")`
+(require 'ocp-indent)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -221,7 +238,7 @@
    '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
  '(lsp-lens-enable t)
  '(package-selected-packages
-   '(js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
+   '(diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile rust-mode magit doom-modeline counsel ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
