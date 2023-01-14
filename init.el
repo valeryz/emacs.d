@@ -85,6 +85,9 @@
 (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . js-mode))
 
+(add-to-list 'load-path "/Users/vz/.opam/default/share/emacs/site-lisp/")
+
+
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
@@ -140,6 +143,16 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+
+
+;; (setq scilla-mode-path "/Users/vz/scilla/misc/emacs-mode/scilla-mode.el")
+;; (setq scilla-bin-path "/Users/vz/scilla/scilla-checkers-and-runners/bin")
+;; (setq scilla-stdlib-path "/Users/vz/scilla/stdlib")
+
+
+;; (use-package scilla
+;;   :load-path (lambda () scilla-mode-path))
+
 
 (use-package projectile
   :diminish projectile-mode
@@ -202,8 +215,8 @@
     (require 'dap-chrome)
     (require 'lsp-rust)
     (require 'lsp-javascript)
-    (require 'lsp-clangd)
     (require 'lsp-json)
+    (require 'lsp-clangd)
     (require 'lsp-go)
     (yas-global-mode)) 
   :config
@@ -287,6 +300,11 @@
 
 (global-set-key (kbd "C-x M-f") 'copy-current-buffer-file-name)
 
+;; Ocaml
+;; (add-to-list 'load-path "/Users/vz/.opam/cs3110-2022fa/share/emacs/site-lisp")
+;;  (load "/Users/vz/.opam/cs3110-2022fa/share/emacs/site-lisp/tuareg-site-file")`
+;; (require 'ocp-indent)
+
 (global-set-key (kbd "C-c r g") 'counsel-rg)
 
 
@@ -305,7 +323,6 @@
 ;; (require 'pyenv-mode-auto)
 
 
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -318,11 +335,12 @@
  '(lsp-rust-analyzer-rustfmt-extra-args ["--edition" "2021"])
  '(lsp-rust-server 'rust-analyzer)
  '(package-selected-packages
-   '(protobuf-mode clang-format rustic string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
+   '(protobuf-mode clang-format diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
  '(python-shell-interpreter
    "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python")
  '(rustic-ansi-faces
    ["black" "red1" "green3" "yellow3" "lightblue" "magenta3" "cyan3" "white"]))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
