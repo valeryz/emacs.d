@@ -258,7 +258,11 @@
 
 (use-package lsp-ivy)
 
-(use-package solidity-mode)
+(use-package flymake-solidity
+  :init (setq flymake-solidity-executable "/opt/homebrew/bin/solc"))
+
+(use-package solidity-mode
+  :hook (solidity-mode . flymake-solidity-load))
 
 (use-package dap-mode)
 
@@ -308,6 +312,9 @@
 (global-set-key (kbd "C-c r g") 'counsel-rg)
 
 
+(setenv "PATH" (concat (getenv "PATH") ":/opt/homebrew/bin"))
+(setq exec-path (append exec-path '("/opt/homebrew/bin")))
+
 (which-key-mode)
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'c++-mode-hook 'lsp)
@@ -335,11 +342,12 @@
  '(lsp-rust-analyzer-rustfmt-extra-args ["--edition" "2021"])
  '(lsp-rust-server 'rust-analyzer)
  '(package-selected-packages
-   '(protobuf-mode clang-format diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
+   '(flymake-easy flymake-solidity protobuf-mode clang-format diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
  '(python-shell-interpreter
    "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python")
  '(rustic-ansi-faces
-   ["black" "red1" "green3" "yellow3" "lightblue" "magenta3" "cyan3" "white"]))
+   ["black" "red1" "green3" "yellow3" "lightblue" "magenta3" "cyan3" "white"])
+ '(solidity-solc-path "/opt/homebrew/bin/solc"))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
