@@ -11,8 +11,6 @@
 (recentf-mode 1)
 (set-fringe-mode 2)
 
-;; (load (concat (getenv "HOME") "/code/motoko/emacs/init.el"))
-
 ;; Backup files
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
@@ -63,11 +61,13 @@
 ;; (require 'clang-format)
 ;; (setq clang-format-style "file")
 
-(setenv "PATH" (concat (getenv "HOME")
-                       "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:"
-                       (concat (getenv "HOME") "/go/bin:")
-                       "/home/valeryz/.pyenv/libexec:"
-                       (getenv "PATH")))
+(setenv "PATH" (string-join (list (expand-file-name "~/.cargo/bin")
+                                  "/usr/local/bin"
+                                  "/opt/homebrew/bin"
+                                  (expand-file-name "~/go/bin")
+                                  (expand-file-name "~/.pyenv/libexec")
+                                  (getenv "PATH"))
+                            ":"))
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -85,7 +85,8 @@
 (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . js-mode))
 
-(add-to-list 'load-path "/Users/vz/.opam/default/share/emacs/site-lisp/")
+
+(add-to-list 'load-path (expand-file-name "~/.opam/default/share/emacs/site-lisp/"))
 
 
 (use-package flycheck
@@ -95,8 +96,7 @@
 (use-package go-mode
   :ensure t)
 
-(add-to-list 'exec-path "/Users/valeryz/bin")
-
+(add-to-list 'exec-path (expand-file-name "~/bin"))
 
 (use-package rustic
   :ensure
@@ -113,6 +113,7 @@
   ;; (setq lsp-eldoc-hook nil)
   ;; (setq lsp-enable-symbol-highlighting nil)
   ;; (setq lsp-signature-auto-activate nil)
+  (setq lsp-ui-sideline-enable nil)
 
   ;; comment to disable rustfmt on save
   (setq rustic-format-on-save t))
