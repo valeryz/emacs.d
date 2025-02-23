@@ -101,6 +101,7 @@
 (use-package rustic
   :ensure
   :bind (:map rustic-mode-map
+              ("M-." . lsp-find-definition)
               ("M-?" . lsp-find-references)
               ("C-c C-c l" . flycheck-list-errors)
               ("C-c C-c a" . lsp-execute-code-action)
@@ -193,13 +194,18 @@
   (lsp-rust-analyzer-server-display-inlay-hints t)
   (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
   (lsp-rust-analyzer-display-chaining-hints t)
-  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
   (lsp-rust-analyzer-display-closure-return-type-hints t)
-  (lsp-rust-analyzer-display-parameter-hints nil)
-  (lsp-rust-analyzer-display-reborrow-hints nil)
+  (lsp-rust-analyzer-display-parameter-hints t)
+  (lsp-rust-analyzer-display-reborrow-hints t)
   (lsp-rust-analyzer-rustfmt-extra-args ["--edition" "2021"])
   :config
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  (setq lsp-auto-guess-root nil)  ;; Prevent auto-guessing root
+  (add-hook 'rust-mode-hook
+            (lambda ()
+              (when (locate-dominating-file default-directory "Cargo.toml")
+                (lsp))))
   :hook
   ((js-mode . lsp)
    (lsp-mode . (lambda ()
@@ -228,7 +234,7 @@
   :custom
   (lsp-ui-peek-always-show t)
   (lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-enable nil))
+  (lsp-ui-doc-enable t))
 
 (use-package lsp-treemacs)
 
@@ -305,8 +311,8 @@
 (global-set-key (kbd "C-x M-f") 'copy-current-buffer-file-name)
 
 ;; Ocaml
-;; (add-to-list 'load-path "/Users/vz/.opam/cs3110-2022fa/share/emacs/site-lisp")
-;;  (load "/Users/vz/.opam/cs3110-2022fa/share/emacs/site-lisp/tuareg-site-file")`
+;; (add-to-list 'load-path (expand-file-name "~/.opam/cs3110-2022fa/share/emacs/site-lisp"))
+;; (load (expand-file-name "~/.opam/cs3110-2022fa/share/emacs/site-lisp/tuareg-site-file"))
 ;; (require 'ocp-indent)
 
 (global-set-key (kbd "C-c r g") 'counsel-rg)
@@ -326,6 +332,48 @@
   (yas-global-mode))
 
 
+
+;; Major mode for OCaml programming
+(use-package tuareg
+  :ensure t
+  :mode (("\\.ocamlinit\\'" . tuareg-mode)))
+
+;; Major mode for editing Dune project files
+(use-package dune
+  :ensure t)
+
+;; Merlin provides advanced IDE features
+(use-package merlin
+  :ensure t
+  :config
+  (add-hook 'tuareg-mode-hook #'merlin-mode)
+  (add-hook 'merlin-mode-hook #'company-mode)
+  ;; we're using flycheck instead
+  (setq merlin-error-after-save nil))
+
+(use-package merlin-eldoc
+  :ensure t
+  :hook ((tuareg-mode) . merlin-eldoc-setup))
+
+;; This uses Merlin internally
+(use-package flycheck-ocaml
+  :ensure t
+  :config
+  (flycheck-ocaml-setup))
+
+;; utop configuration
+(use-package utop
+  :ensure t
+  :config
+  (add-hook 'tuareg-mode-hook #'utop-minor-mode))
+
+
+;; (use-package copilot
+;;   :quelpa (copilot :fetcher github
+;;                    :repo "zerolfx/copilot.el"
+;;                    :branch "main"
+;;                    :files ("dist" "*.el")))
+
 ;; (require 'pyenv-mode)
 ;; (require 'pyenv-mode-auto)
 
@@ -337,12 +385,15 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
+ '(lsp-enable-file-watchers nil)
  '(lsp-lens-enable t)
  '(lsp-log-io t)
+ '(lsp-rust-analyzer-exclude-dirs ["/Users/valeryz/.Trash"])
  '(lsp-rust-analyzer-rustfmt-extra-args ["--edition" "2021"])
  '(lsp-rust-server 'rust-analyzer)
+ '(lsp-signature-auto-activate nil)
  '(package-selected-packages
-   '(flymake-easy flymake-solidity protobuf-mode clang-format diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
+   '(ztree quelpa-use-package quelpa utop flycheck-ocaml merlin-eldoc merlin dune tuareg flymake-easy flymake-solidity protobuf-mode clang-format diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
  '(python-shell-interpreter
    "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python")
  '(rustic-ansi-faces
