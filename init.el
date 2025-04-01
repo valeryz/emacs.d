@@ -11,8 +11,6 @@
 (recentf-mode 1)
 (set-fringe-mode 2)
 
-;; (load (concat (getenv "HOME") "/code/motoko/emacs/init.el"))
-
 ;; Backup files
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
@@ -25,6 +23,8 @@
       mac-command-modifier 'meta
       mac-option-modifier 'none)
 
+(windmove-default-keybindings)
+
 ;; Font
 ;; (set-face-attribute 'default nil :font "Menlo" :height 140)
 
@@ -36,17 +36,6 @@
 (add-to-list 'package-archives
              '("MELPA Stable" . "http://stable.melpa.org/packages/") t)
 (package-initialize)
-;; (package-refresh-contents)
-
-;; (global-flycheck-mode)
-
-;; (setq package-selected-packages
-;;       '(rjsx-mode js-mode zenburn json-mode yaml yaml-mode ivy-rich
-;;                   adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui
-;;                   swift-mode
-;;                   motoko-mode yasnippet yasnippets solidity-mode company
-;;                   company-mode lsp-ivy which-key projectile rustic magit
-;;                   doom-modeline counsel ivy command-log-mode use-package))
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -56,22 +45,13 @@
 (setq use-package-always-ensure t)
 
 (use-package zenburn-theme)
-;;(load-theme 'wombat)
 (load-theme 'zenburn t)
-
-;; Clang stuff
-;; (require 'clang-format)
-;; (setq clang-format-style "file")
 
 (setenv "PATH" (concat (getenv "HOME")
                        "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:"
                        (concat (getenv "HOME") "/go/bin:")
                        "/home/valeryz/.pyenv/libexec:"
                        (getenv "PATH")))
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -85,8 +65,13 @@
 (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . js-mode))
 
-(add-to-list 'load-path "/Users/vz/.opam/default/share/emacs/site-lisp/")
 
+;; Common Lisp
+;; (setq inferior-lisp-program "/Applications/AllegroCL64express.app/Contents/Resources/alisp")
+(setq inferior-lisp-program "sbcl")
+(use-package slime)
+(require 'slime-autoloads)
+(global-set-key (kbd "C-c s") 'slime-repl)
 
 (use-package flycheck
   :ensure t
@@ -120,6 +105,22 @@
 
 (setq rustic-lsp-server 'rust-analyzer)
 
+;; Avy
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+(global-set-key (kbd "C-:") 'avy-goto-char)
+(global-set-key (kbd "C-'") 'avy-goto-char-2)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper))
@@ -128,31 +129,40 @@
   (setq ivy-use-virtual-buffers t)
   (setq ivy-wrap t)
   (setq ivy-count-format "(%d/%d)")
-  (setq enable-recursive-minibuffers t))
+  (setq enable-recursive-minibuffers nil))
+
+
+(defun escape-region (start end)
+  "Escape quotes and backslashes in the selected region.
+Replaces \\ with \\\\ and \" with \\\"."
+  (interactive "r")
+  (save-excursion
+    ;; Escape backslashes first
+    (goto-char start)
+    (while (re-search-forward "\\\\" end t)
+      (replace-match "\\\\" nil t)
+      (cl-incf end))
+      
+    ;; Then escape quotes
+    (goto-char start)
+    (while (re-search-forward "\"" end t)
+      (replace-match "\\\"" nil t)
+      (cl-incf end))))
 
 (use-package ivy-rich
   :init (ivy-rich-mode 1))
 
-(use-package counsel
-  :diminish
-  :bind (("M-x" . counsel-M-x)
-         ("C-x f" . counsel-find-file)
-         ("C-x b" . counsel-ibuffer)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history)))
+;; (use-package counsel
+;;   :diminish
+;;   :bind (("M-x" . counsel-M-x)
+;;          ("C-x f" . counsel-find-file)
+;;          ("C-x b" . counsel-ibuffer)
+;;          :map minibuffer-local-map
+;;          ("C-r" . 'counsel-minibuffer-history)))
 
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
-
-
-;; (setq scilla-mode-path "/Users/vz/scilla/misc/emacs-mode/scilla-mode.el")
-;; (setq scilla-bin-path "/Users/vz/scilla/scilla-checkers-and-runners/bin")
-;; (setq scilla-stdlib-path "/Users/vz/scilla/stdlib")
-
-
-;; (use-package scilla
-;;   :load-path (lambda () scilla-mode-path))
 
 
 (use-package projectile
@@ -224,7 +234,7 @@
     (require 'lsp-json)
     (require 'lsp-clangd)
     (require 'lsp-go)
-    (yas-global-mode)) 
+    (yas-global-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map))
 
@@ -384,7 +394,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48" default))
+   '("3b8284e207ff93dfc5e5ada8b7b00a3305351a3fb222782d8033a400a48eca48"
+     default))
  '(lsp-enable-file-watchers nil)
  '(lsp-lens-enable t)
  '(lsp-log-io t)
@@ -393,11 +404,28 @@
  '(lsp-rust-server 'rust-analyzer)
  '(lsp-signature-auto-activate nil)
  '(package-selected-packages
-   '(ztree quelpa-use-package quelpa utop flycheck-ocaml merlin-eldoc merlin dune tuareg flymake-easy flymake-solidity protobuf-mode clang-format diffpdf ocamlformat nix-mode proof-general zzz-to-char js-comint string-inflection pyenv-mode-auto pyenv-mode lsp-pyre go-mode js-comint counsel-gtags flycheck-rust vue-mode rjsx-mode js-mode zenburn dap-mode json-mode yaml yaml-mode ivy-rich adoc-mode rainbow-delimiters company-lsp lsp-mode lsp-ui swift-mode motoko-mode yasnippet yasnippets solidity-mode company company-mode lsp-ivy which-key projectile magit doom-modeline counsel ivy command-log-mode use-package))
+   '(adoc-mode clang-format command-log-mode company company-lsp
+               company-mode counsel counsel-gtags dap-mode diffpdf
+               doom-modeline dune f flycheck-ocaml flycheck-rust
+               flymake-easy flymake-solidity go-mode ivy
+               ivy-dired-history ivy-prescient ivy-rich js-comint
+               js-comint js-mode json-mode lsp-ivy lsp-mode lsp-pyre
+               lsp-ui magit merlin merlin-eldoc motoko-mode nix-mode
+               ocamlformat projectile proof-general protobuf-mode
+               pyenv-mode pyenv-mode-auto quelpa quelpa-use-package
+               rainbow-delimiters request-deferred rjsx-mode slime
+               solidity-mode string-inflection swift-mode tuareg
+               use-package utop vue-mode which-key yaml yaml-mode
+               yasnippet yasnippets zenburn zprint-format ztree
+               zzz-to-char))
  '(python-shell-interpreter
    "/home/valeryz/.cache/pypoetry/virtualenvs/defi-demo-ECH-y867-py3.10/bin/python")
  '(rustic-ansi-faces
-   ["black" "red1" "green3" "yellow3" "lightblue" "magenta3" "cyan3" "white"])
+   ["black" "red1" "green3" "yellow3" "lightblue" "magenta3" "cyan3"
+    "white"])
+ '(safe-local-variable-values
+   '((Package . JSON) (Package . JSON-RPC) (Base . 10)
+     (Syntax . ANSI-COMMON-LISP)))
  '(solidity-solc-path "/opt/homebrew/bin/solc"))
 
 (custom-set-faces
