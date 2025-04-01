@@ -47,11 +47,17 @@
 (use-package zenburn-theme)
 (load-theme 'zenburn t)
 
-(setenv "PATH" (concat (getenv "HOME")
-                       "/.cargo/bin:/usr/local/bin:/opt/homebrew/bin:"
-                       (concat (getenv "HOME") "/go/bin:")
-                       "/home/valeryz/.pyenv/libexec:"
-                       (getenv "PATH")))
+;; Clang stuff
+;; (require 'clang-format)
+;; (setq clang-format-style "file")
+
+(setenv "PATH" (string-join (list (expand-file-name "~/.cargo/bin")
+                                  "/usr/local/bin"
+                                  "/opt/homebrew/bin"
+                                  (expand-file-name "~/go/bin")
+                                  (expand-file-name "~/.pyenv/libexec")
+                                  (getenv "PATH"))
+                            ":"))
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -65,6 +71,8 @@
 (add-to-list 'auto-mode-alist '("\\.tpp\\'" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . js-mode))
 
+
+(add-to-list 'load-path (expand-file-name "~/.opam/default/share/emacs/site-lisp/"))
 
 ;; Common Lisp
 ;; (setq inferior-lisp-program "/Applications/AllegroCL64express.app/Contents/Resources/alisp")
@@ -80,8 +88,7 @@
 (use-package go-mode
   :ensure t)
 
-(add-to-list 'exec-path "/Users/valeryz/bin")
-
+(add-to-list 'exec-path (expand-file-name "~/bin"))
 
 (use-package rustic
   :ensure
@@ -99,6 +106,7 @@
   ;; (setq lsp-eldoc-hook nil)
   ;; (setq lsp-enable-symbol-highlighting nil)
   ;; (setq lsp-signature-auto-activate nil)
+  (setq lsp-ui-sideline-enable nil)
 
   ;; comment to disable rustfmt on save
   (setq rustic-format-on-save t))
